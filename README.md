@@ -25,8 +25,8 @@ Matching cancer patients to clinical trials using standard text search or ungrou
 
 ## Live Links
 
-* **Live Web Application**: [https://trialmatch-tau.vercel.app](https://trialmatch-tau.vercel.app)
-* **Interactive 3-Arm Benchmark**: [https://trialmatch-tau.vercel.app/benchmark](https://trialmatch-tau.vercel.app/benchmark)
+* **Live Web Application**: [https://trialmatch-oncology.vercel.app](https://trialmatch-oncology.vercel.app)
+* **Interactive 3-Arm Benchmark**: [https://trialmatch-oncology.vercel.app/benchmark](https://trialmatch-oncology.vercel.app/benchmark)
 * **Hosted Sanity Studio**: [https://trialmatch-oncology.sanity.studio](https://trialmatch-oncology.sanity.studio)
 * **Sanity GROQ MCP Endpoint**: `https://api.sanity.io/v1/context/organizations/oz3yptidu/mcp/trialmatch`
 * **Sanity Knowledge Base MCP Endpoint**: `https://api.sanity.io/v1/context/organizations/oz3yptidu/mcp/trialmatch-kb`
