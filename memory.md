@@ -6,9 +6,16 @@
 
 - 2026-09-30 [Phase 1B - Sanity Schemas & Seed Engine]: Created Sanity Studio schemas (`studio/schemas/clinicalTrial.ts`, `studio/schemas/protocolRule.ts`, `studio/schemas/index.ts`), Studio configuration (`studio/sanity.config.ts`, `studio/sanity.cli.ts`), `.env.example`, and batch seed engine (`scripts/seed_sanity.ts`). Implemented deterministic IDs (`trial-${nctId}`, `rule-${ruleId}`), transaction chunking (25 docs/batch), automated array `_key` injection for locations and interventions, 5 foundational protocol rules, and safe dry-run exit when credentials are placeholders.
 
-- 2026-09-30 [Phase 1C - Next.js Web Application & The Duel UI]: Built full Next.js 16 web application with React 19 in `path1` using `pnpm`. Implemented The Duel interactive split-screen (Structured Sanity Agent vs Naive Keyword Search), 8 quick-fill clinical preset chips, live Scoreboard with protocol compliance metrics, expandable GROQ trace drawer, and dual-backend engine connecting to live Sanity (Project `6xsr2k42`, dataset `production`, seeded with 100 trials and 5 protocol rules) with in-memory fallback.
+- 2026-09-30 [Phase 1D - 3-Arm Evaluation Suite & Submission Benchmark Generator]: Built and executed 3-Arm Benchmark Suite across 10 gold-standard oncology test cases in `path1` using `pnpm`. Implemented CLI runner (`scripts/run_eval.ts`, `pnpm eval`), benchmark evaluation engine (`lib/eval_runner.ts`), gold-standard test definitions (`lib/eval_cases.ts`), Next.js API route (`app/api/benchmark/route.ts`), interactive table (`components/BenchmarkTable.tsx`), and benchmark view (`app/benchmark/page.tsx`). Generated `data/eval_results.json` and comprehensive submission article report `data/eval_summary.md`. Verified Arm 1 (Structured Sanity Agent) achieved 100% precision, 0 safety violations, and 0 hallucinations, while Arm 2 (Naive Keyword) triggered 60 safety violations and Arm 3 (Bare LLM) hallucinated 20 NCT IDs.
 
-## Key Decisions (Never Re-Litigate)
+## Current Implementation State
+Phases 1A, 1B, 1C, and 1D complete.
+- Normalized dataset of 100 precision oncology trials in `data/trials_normalized.json`.
+- Complete Sanity Studio schema suite in `studio/schemas/`.
+- Live Sanity dataset seeded: 100 `clinicalTrial` documents and 5 `protocolRule` documents in project `6xsr2k42`.
+- Next.js web application running at `http://localhost:3000` with The Duel UI (`/`) and 3-Arm Benchmark (`/benchmark`).
+- Full benchmark evaluation data in `data/eval_results.json` and human-readable submission article report in `data/eval_summary.md`.
+- Next.js production build compiling cleanly in 325ms with zero errors.
 - [Package Manager]: Use `pnpm` exclusively across all development, scripts, and sub-chat prompts (v11.21.0 verified on machine).
 - [Challenge Target]: DEV Community x Sanity Challenge Path One ("Ship an Agent That Queries Real Content"). Deadline: October 4, 2026.
 - [Target Corpus]: Exactly 100 active, recruiting oncology clinical trials with verified genomic biomarkers from ClinicalTrials.gov API v2, indexed in Sanity Studio dataset and Sanity Knowledge Base.

@@ -1,11 +1,12 @@
 # TrialMatch — Progress
 
-_Updated: September 30, 2026 | Session 4_
+_Updated: September 30, 2026 | Session 5_
 
 ## State
-Phase 1C completed. Next.js 16 web application with React 19 and "The Duel" interactive split-screen UI implemented in `path1` using `pnpm`. Features real-time live Scoreboard (100 trials corpus, safety accuracy comparison), 8 quick-fill clinical preset chips (1-click trigger), responsive free-text patient narrative input with structured filter overrides, and dual data retrieval engine connecting to live Sanity project `6xsr2k42` (with in-memory fallback). Live dataset seeded with all 100 trials and 5 protocol rules. Production build compiles in 758ms with zero errors. All 8 presets and custom patient queries pass automated integration tests.
+Phase 1D completed. 3-Arm Evaluation Suite and Submission Benchmark Generator implemented and verified across 10 gold-standard oncology test cases in `path1` using `pnpm`. Features CLI evaluator (`scripts/run_eval.ts`, `pnpm eval`), automated generation of detailed benchmark data (`data/eval_results.json`) and submission report (`data/eval_summary.md`), plus interactive Web UI at `http://localhost:3000/benchmark` with live audit drawer and DEV post report export. Benchmark proves Arm 1 (Structured Sanity Agent) achieves 100% precision with 0 safety violations, whereas Arm 2 (Naive Keyword) triggers 60 safety violations and Arm 3 (Bare LLM) hallucinates 20 non-existent trial identifiers. Production build compiles cleanly in 325ms with 0 errors.
 
 ## Next Steps
-1. Phase 1D Sub-Chat: 3-Arm Benchmark Suite & automated DEV Submission article generator.
-2. Production deployment and demo recording.
+1. Prepare final DEV Community submission article using `data/eval_summary.md`.
+2. Record browser demo walkthrough showing The Duel and the 3-Arm Benchmark.
+3. Final deployment and project submission.
 

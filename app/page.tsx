@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { Scoreboard } from '@/components/Scoreboard';
 import { ScenarioChips } from '@/components/ScenarioChips';
 import { PatientInputBar } from '@/components/PatientInputBar';
 import { DuelArena } from '@/components/DuelArena';
 import { CLINICAL_SCENARIOS } from '@/lib/scenarios';
 import { ClinicalScenario, DuelResult, PatientProfile, ScoreboardStats } from '@/lib/types';
-import { Dna, ShieldAlert, Award } from 'lucide-react';
+import { Dna, ShieldAlert, Award, Swords, BarChart3 } from 'lucide-react';
 
 export default function Home() {
   const [activeScenarioId, setActiveScenarioId] = useState<string>(CLINICAL_SCENARIOS[0].id);
@@ -123,7 +124,48 @@ export default function Home() {
           <span className="brand-badge">Path One: Sanity Context Agent</span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Navigation Tabs */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Link
+            href="/"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: '#0B1120',
+              background: 'var(--blue-accent)',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              border: '1px solid var(--blue-accent)',
+              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.3)',
+            }}
+          >
+            <Swords size={16} />
+            The Duel (Live Match)
+          </Link>
+
+          <Link
+            href="/benchmark"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: 600,
+              color: 'var(--text-muted)',
+              background: 'var(--bg-panel)',
+              padding: '8px 14px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-color)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <BarChart3 size={16} />
+            3-Arm Benchmark
+          </Link>
+
           <span
             style={{
               display: 'inline-flex',
@@ -131,14 +173,14 @@ export default function Home() {
               gap: '6px',
               fontSize: '12px',
               color: 'var(--text-muted)',
-              background: 'var(--bg-panel)',
-              padding: '6px 12px',
+              background: 'var(--bg-panel-subtle)',
+              padding: '8px 12px',
               borderRadius: '8px',
               border: '1px solid var(--border-color)',
             }}
           >
             <Award size={14} color="var(--amber-main)" />
-            DEV x Sanity Challenge 2026
+            DEV x Sanity 2026
           </span>
         </div>
       </header>

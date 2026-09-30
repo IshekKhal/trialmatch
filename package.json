@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "ingest": "tsx scripts/ingest_trials.ts",
-    "seed": "tsx scripts/seed_sanity.ts"
+    "seed": "tsx scripts/seed_sanity.ts",
+    "eval": "tsx scripts/run_eval.ts"
   },
   "keywords": [
     "clinical-trials",

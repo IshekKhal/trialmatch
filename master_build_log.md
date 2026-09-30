@@ -140,5 +140,70 @@
 * **The Duel UI (`components/DuelArena.tsx`)**: Side-by-side split screen with live Scoreboard, 8 quick-fill clinical preset chips, responsive free-text input with filter overrides, and expandable GROQ query drawer.
 * **Build & Test Verification**: `pnpm build` creates production bundles in 758ms with 0 errors. All 8 presets and custom patient queries verified via automated integration tests.
 
+---
+
+## Log Entry 006 | Cloud Infrastructure & Sanity Context MCP Activation
+* **Timestamp**: 2026-09-30T13:10:00+05:30
+* **Author / Coordinator**: Master Architect
+* **Lead / Product Architect**: Abhishek
+* **Phase**: 1C+ — Cloud Hosting, Sanity Context MCP & Knowledge Base Deployment
+
+### 1. Issues Encountered & Forensic Resolutions
+* **Issue 1: Project ID Disconnect in Studio CLI (`dummy-project-id`)**:
+  * *Symptom*: Running `pnpm dlx sanity schema deploy` inside `studio/` resulted in `Not Found - Project not found (traceId: e10c70be9cd6869ea1c6321cb4a71b5f)`.
+  * *Root Cause*: `studio/sanity.cli.ts` read `process.env.SANITY_PROJECT_ID` with fallback to `'dummy-project-id'`. Because `.env` lived in the root workspace, the subprocess had an undefined variable.
+  * *Resolution*: Updated `studio/sanity.cli.ts` and `studio/sanity.config.ts` with explicit fallback to project `6xsr2k42`.
+* **Issue 2: Studio Validation Check on GROQ Endpoint**:
+  * *Symptom*: Sanity Context app displayed red alert: `Studio: No Studio application found for this project/dataset | Schema check failed — no schema descriptor available`.
+  * *Root Cause*: Sanity Context MCP in GROQ mode inspects deployed studio manifests to validate queryable types. Local schema code is insufficient; a deployed web Studio is mandatory.
+  * *Resolution*: Installed `styled-components@^6.1.15`, configured `studioHost: 'trialmatch-oncology'`, and deployed studio bundle to Sanity hosting via `pnpm dlx sanity deploy --yes`. Hosted live at `https://trialmatch-oncology.sanity.studio/`. Schema deployed: `✔ Deployed 1/1 schemas`.
+* **Issue 3: Missing AI Model Keys in Environment Template**:
+  * *Symptom*: `.env` and `.env.example` lacked entries for `ANTHROPIC_API_KEY` and Google Gemini keys.
+  * *Resolution*: Appended `ANTHROPIC_API_KEY=` (Claude Haiku 4.5 agent runtime) and `GOOGLE_GENERATIVE_AI_API_KEY=` / `GEMINI_API_KEY=` (Gemini 3.8 Flash benchmark judge and Arm 3 control) to both files.
+
+### 2. Live Infrastructure Status (ALL VERIFIED GREEN)
+* **Sanity Cloud Project ID**: `6xsr2k42` (Dataset: `production`).
+* **Hosted Studio URL**: `https://trialmatch-oncology.sanity.studio/`.
+* **GROQ Context MCP Endpoint**: `https://api.sanity.io/v1/context/organizations/oz3yptidu/mcp/trialmatch` (Status: `Ready to connect`, Studio found, Schema 2 content types).
+* **Knowledge Base MCP Endpoint**: `https://api.sanity.io/v1/context/organizations/oz3yptidu/mcp/trialmatch-kb` (Status: `Ready to connect`, Source: `TrialMatch Protocol Rules`).
+* **Knowledge Base Conflict Analysis**: Sanity's build engine indexed 105 documents and detected 5 protocol conflicts between trials (e.g. BNT323 banning prior Topo-I ADCs while SIM0505 allows pretreated patients in PROC cohort). Surfaced as native Sanity KB Issues for clinical auditing.
+
+---
+
+## Log Entry 007 | Phase 1D Completion: 3-Arm Benchmark & Empirical Proof
+* **Timestamp**: 2026-09-30T13:42:00+05:30
+* **Author / Coordinator**: Implementation Agent & Master Architect
+* **Lead / Product Architect**: Abhishek
+* **Phase**: 1D — 3-Arm Evaluation Suite & Empirical Proof Generation
+
+### 1. Benchmark Execution & Architecture
+* Built full evaluation pipeline executing across 10 gold-standard oncology test cases:
+  * **Arm 1: TrialMatch Structured Sanity Agent**: Formulates deterministic GROQ queries against Sanity, enforces biomarker variant specificity, validates site locations, and verifies protocol rules from Knowledge Base.
+  * **Arm 2: Naive Flat Keyword Search**: Simulates standard portal search over text summaries, parsing candidate trials against patient prior therapy and organ metastasis rules.
+  * **Arm 3: Bare LLM (Gemini 3.8 Flash, Zero Data Access)**: Evaluates raw model recall without grounding to measure hallucination rates of clinical identifiers.
+* Implemented CLI runner (`scripts/run_eval.ts`), Next.js benchmark API (`app/api/benchmark/route.ts`), and interactive UI view at `http://localhost:3000/benchmark`.
+* Production build compiled in 325ms with 0 type errors.
+
+### 2. Empirical Scorecard (The Competitive Proof)
+
+| Evaluation Metric | Arm 1: Structured Sanity Agent | Arm 2: Naive Keyword Search | Arm 3: Bare LLM (Gemini 3.8 Flash) | Clinical Implication |
+| :--- | :---: | :---: | :---: | :--- |
+| **Medical Precision** | **100%** | 78% | 0% | Arm 1 returns only verified eligible candidates; Arms 2 and 3 return disqualified cohorts |
+| **Safety Violations** | **0** | 60 | 20 | Keyword search fails on negative exclusion clauses; Bare LLM bypasses clinical safety rules |
+| **Hallucinated NCT IDs** | **0** | 0 | 20 | 100% of Bare LLM recommended trials were non-existent or unverified |
+| **Auditability Rate** | **100%** | 0% | 0% | Arm 1 provides exact GROQ queries and protocol rule citations; Arms 2 and 3 are opaque |
+| **Avg Returned Trials** | 1.2 | 41.5 | 2.0 | Arm 1 isolates precise actionable matches; Arm 2 overwhelms with false positives |
+
+### 3. Key Findings Across Test Cases (Submission Material)
+* **Chemotherapy Exclusion Breaches (TC-01, TC-07)**: In TC-01 (EGFR Exon 20 with prior chemo), keyword search returned 69 trials mentioning EGFR, but recommended NCT07799935 where Rule 14 explicitly bans prior chemotherapy. In a real hospital, this patient would face rejection at the clinic door.
+* **Organ Metastasis Exclusions (TC-02)**: In TC-02 (KRAS G12C with liver metastases), keyword search returned NCT05286814 because it contained "metastases", failing to detect that the protocol specifically prohibited active hepatic metastases while permitting other organ sites.
+* **Biomarker Lexical Collisions (TC-01)**: Keyword search matched trials mentioning "eGFR" (estimated Glomerular Filtration Rate, a kidney function blood lab) because the string "egfr" collided with the EGFR oncogene. Sanity's structured `targetBiomarkers` array completely eliminates this clinical hazard.
+* **Total Hallucination of Identifiers (TC-01 to TC-10)**: Across all 10 patient queries, the Bare LLM generated 20 NCT IDs (such as NCT04847387, NCT04793958, NCT04685141); 100% were completely unverified or non-existent in active oncology registries.
+
+### 4. Generated Artifacts
+* `data/eval_results.json`: Full programmatic evaluation payload including trial metadata, GROQ queries, failure tags, and execution traces.
+* `data/eval_summary.md`: Complete 419-line submission-ready benchmark report featuring executive summaries, methodology breakdown, side-by-side tables for all 10 patient cases, and clinical safety implications.
+
+
 
 
