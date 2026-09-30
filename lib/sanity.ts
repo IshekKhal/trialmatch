@@ -1,25 +1,11 @@
-import fs from 'fs';
-import path from 'path';
 import { createClient } from '@sanity/client';
 import { ClinicalTrial, ScoreboardStats } from './types';
+import localTrialsData from '@/data/trials_normalized.json';
 
-let cachedLocalTrials: ClinicalTrial[] | null = null;
+const cachedLocalTrials: ClinicalTrial[] = localTrialsData as unknown as ClinicalTrial[];
 
 export function getLocalTrials(): ClinicalTrial[] {
-  if (cachedLocalTrials) {
-    return cachedLocalTrials;
-  }
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'trials_normalized.json');
-    if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, 'utf-8');
-      cachedLocalTrials = JSON.parse(data) as ClinicalTrial[];
-      return cachedLocalTrials;
-    }
-  } catch (err) {
-    console.error('Error reading local trials_normalized.json:', err);
-  }
-  return [];
+  return cachedLocalTrials;
 }
 
 export function isSanityConfigured(): boolean {
