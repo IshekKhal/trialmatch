@@ -67,3 +67,42 @@
 * **Safety Failure Highlighting**: When the keyword arm returns a trial that the patient is medically excluded from, the UI will highlight the safety violation in red (e.g. "SAFETY VIOLATION: Patient excluded by prior chemotherapy protocol").
 * **Sub-Chat Prompts Format**: All sub-chat prompts are stored in `prompt.txt` as clean, raw text files without markdown decor.
 
+---
+
+## Log Entry 003 | Phase 1A Completion: ClinicalTrials.gov Ingestion Engine
+* **Timestamp**: 2026-09-30T11:41:00+05:30
+* **Author / Coordinator**: Implementation Agent
+* **Lead / Product Architect**: Abhishek
+* **Phase**: 1A — Data Ingestion & Biomarker Enrichment
+
+### 1. Ingestion Pipeline Implementation
+* Built standalone TypeScript ingestion script at `scripts/ingest_trials.ts` executed via `tsx` under `pnpm`.
+* Queries official ClinicalTrials.gov API v2 (`https://clinicaltrials.gov/api/v2/studies`).
+* Handles API v2 field naming schema (`ContactsLocationsModule`).
+* Employs token-based pagination across 6 pages (5.77 seconds total execution time).
+* Validates every record and the complete 100-trial dataset against strict Zod schemas (`NormalizedDatasetSchema`).
+* Saves normalized dataset to `data/trials_normalized.json` (1.2 MB).
+
+### 2. Extraction & Normalization Metrics
+* **Total Trials**: Exactly 100 active, recruiting precision oncology clinical trials.
+* **Biomarkers Distribution**:
+  * EGFR: 45
+  * HER2: 38
+  * ALK: 14
+  * BRAF: 11
+  * KRAS: 10
+  * MET: 8
+  * ROS1: 6
+  * BRCA1: 6
+  * RET: 5
+  * G12C: 4
+  * BRCA2: 4
+  * BRCA: 4
+  * V600E: 2
+  * NTRK: 2
+  * Exon 20: 1
+* **Phase Breakdown**: Phase 2 (38), Phase 1 (30), NA (24), Phase 3 (7), Phase 4 (1).
+* **Prior Chemotherapy Rules**: ANY (70), ALLOWED (15), REQUIRED (12), EXCLUDED (3).
+* **Location Mapping**: 1,144 valid facility locations extracted with facility, city, state, and country.
+* **Sample NCT IDs**: NCT05376891, NCT05362760, NCT06518382, NCT06830694, NCT07492342.
+

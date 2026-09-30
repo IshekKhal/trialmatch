@@ -1,0 +1,26 @@
+{
+  "name": "trialmatch-path1",
+  "version": "1.0.0",
+  "description": "ClinicalTrials.gov Ingestion and Normalization Engine for Precision Oncology",
+  "type": "module",
+  "scripts": {
+    "ingest": "tsx scripts/ingest_trials.ts"
+  },
+  "keywords": [
+    "clinical-trials",
+    "oncology",
+    "biomarkers",
+    "sanity",
+    "trialmatch"
+  ],
+  "author": "Abhishek",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}
