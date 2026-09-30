@@ -12,6 +12,7 @@ interface BenchmarkRunnerProps {
 export function BenchmarkRunner({ initialSummary }: BenchmarkRunnerProps) {
   const [summary, setSummary] = useState<BenchmarkSuiteSummary | null>(initialSummary || null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [justCompleted, setJustCompleted] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -33,6 +34,10 @@ export function BenchmarkRunner({ initialSummary }: BenchmarkRunnerProps) {
       }
       const data: BenchmarkSuiteSummary = await res.json();
       setSummary(data);
+      if (forceRefresh) {
+        setJustCompleted(true);
+        setTimeout(() => setJustCompleted(false), 3500);
+      }
     } catch (err: any) {
       console.error('Error fetching benchmark:', err);
       setError(err?.message || 'Failed to execute benchmark suite');
@@ -142,8 +147,22 @@ export function BenchmarkRunner({ initialSummary }: BenchmarkRunnerProps) {
               transition: 'all 0.15s ease',
             }}
           >
-            <RotateCw size={16} className={isRunning ? 'spin' : ''} />
-            {isRunning ? 'Running 3-Arm Suite...' : 'Run Live Benchmark'}
+            {isRunning ? (
+              <>
+                <RotateCw size={16} className="spin" />
+                <span>Running Evaluation (10 Cases)...</span>
+              </>
+            ) : justCompleted ? (
+              <>
+                <Check size={16} />
+                <span>Evaluation Complete!</span>
+              </>
+            ) : (
+              <>
+                <RotateCw size={16} />
+                <span>Run Live Benchmark</span>
+              </>
+            )}
           </button>
         </div>
       </div>

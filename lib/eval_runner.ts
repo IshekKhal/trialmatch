@@ -487,39 +487,37 @@ Note: Please consult with your oncologist to verify current trial recruitment st
  * Runs the complete 3-Arm Evaluation Suite across all 10 Gold-Standard Test Cases.
  */
 export async function runFullBenchmarkSuite(onProgress?: (index: number, total: number, caseId: string) => void): Promise<BenchmarkSuiteSummary> {
-  const results: TestCaseBenchmarkResult[] = [];
   const allTrials = getLocalTrials();
 
-  for (let i = 0; i < BENCHMARK_TEST_CASES.length; i++) {
-    const tc = BENCHMARK_TEST_CASES[i];
-    if (onProgress) {
-      onProgress(i + 1, BENCHMARK_TEST_CASES.length, tc.id);
-    }
+  // Run all 10 benchmark test cases in parallel for fast execution on serverless
+  const results: TestCaseBenchmarkResult[] = await Promise.all(
+    BENCHMARK_TEST_CASES.map(async (tc, i) => {
+      if (onProgress) {
+        onProgress(i + 1, BENCHMARK_TEST_CASES.length, tc.id);
+      }
 
-    // Run Arm 1: Structured Sanity Agent
-    const arm1 = await runArm1Structured(tc);
+      // Run arms concurrently
+      const [arm1, arm3] = await Promise.all([
+        runArm1Structured(tc),
+        runArm3BareLlm(tc),
+      ]);
+      const arm2 = runArm2Naive(tc);
 
-    // Run Arm 2: Naive Keyword Search
-    const arm2 = runArm2Naive(tc);
+      const clinicalVerdict =
+        arm1.totalReturned > 0
+          ? `Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned ${arm2.safetyViolations} dangerous safety violations. Bare LLM hallucinated ${arm3.hallucinations} invalid NCT IDs.`
+          : `Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.`;
 
-    // Run Arm 3: Bare LLM
-    const arm3 = await runArm3BareLlm(tc);
-
-    // Determine clinical verdict
-    const clinicalVerdict =
-      arm1.totalReturned > 0
-        ? `Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned ${arm2.safetyViolations} dangerous safety violations. Bare LLM hallucinated ${arm3.hallucinations} invalid NCT IDs.`
-        : `Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.`;
-
-    results.push({
-      testCase: tc,
-      arm1,
-      arm2,
-      arm3,
-      winner: 'arm1',
-      clinicalVerdict,
-    });
-  }
+      return {
+        testCase: tc,
+        arm1,
+        arm2,
+        arm3,
+        winner: 'arm1',
+        clinicalVerdict,
+      };
+    })
+  );
 
   // Calculate aggregated metrics
   const count = results.length;
