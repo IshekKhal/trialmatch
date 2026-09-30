@@ -386,13 +386,13 @@ Location: ${testCase.location}
 Narrative: "${testCase.patientNarrative}"`;
 
   let rawOutput = '';
-  let modelName = 'gemini-2.5-flash';
+  let modelName = 'gemini-3.8-flash';
 
   const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
   if (googleKey && googleKey.trim() !== '' && !googleKey.includes('your_')) {
     try {
       const response = await generateText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-3.8-flash'),
         system: systemPrompt,
         prompt: userPrompt,
       });
@@ -400,7 +400,7 @@ Narrative: "${testCase.patientNarrative}"`;
     } catch (err: any) {
       console.warn('Google Gemini API call failed, generating simulated bare LLM baseline:', err?.message || err);
       rawOutput = generateSimulatedBareLlmResponse(testCase);
-      modelName = 'gemini-2.5-flash (simulated zero-data baseline)';
+      modelName = 'gemini-3.8-flash (simulated zero-data baseline)';
     }
   } else {
     rawOutput = generateSimulatedBareLlmResponse(testCase);
