@@ -102,7 +102,25 @@
   * NTRK: 2
   * Exon 20: 1
 * **Phase Breakdown**: Phase 2 (38), Phase 1 (30), NA (24), Phase 3 (7), Phase 4 (1).
-* **Prior Chemotherapy Rules**: ANY (70), ALLOWED (15), REQUIRED (12), EXCLUDED (3).
-* **Location Mapping**: 1,144 valid facility locations extracted with facility, city, state, and country.
 * **Sample NCT IDs**: NCT05376891, NCT05362760, NCT06518382, NCT06830694, NCT07492342.
+
+---
+
+## Log Entry 004 | Phase 1B Verification & Model Architecture Lock
+* **Timestamp**: 2026-09-30T12:08:00+05:30
+* **Author / Coordinator**: Master Architect
+* **Lead / Product Architect**: Abhishek
+* **Phase**: 1B — Sanity Studio Schemas & Batch Seeding Engine
+
+### 1. Verification of Phase 1B
+* **Schemas**: Implemented `clinicalTrial` and `protocolRule` schemas with strict types, custom validations, and structureTool configuration.
+* **Batch Import Script**: `scripts/seed_sanity.ts` verified via local dry-run. It validates all 100 trials, 1,144 locations, 244 interventions, and 5 protocol rules.
+* **Array Object Keys Gotcha**: Implemented deterministic key generation (`loc-${nctId}-${idx}` and `intv-${nctId}-${idx}`) to satisfy Sanity's mutation requirements for array items.
+* **Compiler Status**: `pnpm tsc --noEmit` exits with code 0 across the entire workspace.
+
+### 2. Model Architecture Decisions (LOCKED)
+* **Agent Engine**: **Claude Haiku 4.5** (`@ai-sdk/anthropic`). Selected for top-tier tool calling and zero-hallucination GROQ query generation.
+* **Benchmark Judge**: **Gemini 3.8 Flash** (`@ai-sdk/google`). Selected for high reasoning capabilities, large context window, and ultra-low evaluation cost.
+* **Dataset Seeding**: Ready for live Sanity project insertion upon credential input in `.env`.
+
 
