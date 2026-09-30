@@ -6,6 +6,8 @@
 
 - 2026-09-30 [Phase 1B - Sanity Schemas & Seed Engine]: Created Sanity Studio schemas (`studio/schemas/clinicalTrial.ts`, `studio/schemas/protocolRule.ts`, `studio/schemas/index.ts`), Studio configuration (`studio/sanity.config.ts`, `studio/sanity.cli.ts`), `.env.example`, and batch seed engine (`scripts/seed_sanity.ts`). Implemented deterministic IDs (`trial-${nctId}`, `rule-${ruleId}`), transaction chunking (25 docs/batch), automated array `_key` injection for locations and interventions, 5 foundational protocol rules, and safe dry-run exit when credentials are placeholders.
 
+- 2026-09-30 [Phase 1C - Next.js Web Application & The Duel UI]: Built full Next.js 16 web application with React 19 in `path1` using `pnpm`. Implemented The Duel interactive split-screen (Structured Sanity Agent vs Naive Keyword Search), 8 quick-fill clinical preset chips, live Scoreboard with protocol compliance metrics, expandable GROQ trace drawer, and dual-backend engine connecting to live Sanity (Project `6xsr2k42`, dataset `production`, seeded with 100 trials and 5 protocol rules) with in-memory fallback.
+
 ## Key Decisions (Never Re-Litigate)
 - [Package Manager]: Use `pnpm` exclusively across all development, scripts, and sub-chat prompts (v11.21.0 verified on machine).
 - [Challenge Target]: DEV Community x Sanity Challenge Path One ("Ship an Agent That Queries Real Content"). Deadline: October 4, 2026.
@@ -14,12 +16,12 @@
 - [Sanity Schema Strategy]: `clinicalTrial` contains structured metadata (biomarkers, priorTherapyRules, locations, eligibility) for GROQ filtering, while `protocolRule` documents store prose medical guidance for the Sanity Knowledge Base vector/semantic index.
 
 ## Current Implementation State
-Phases 1A and 1B complete.
+Phases 1A, 1B, and 1C complete.
 - Normalized dataset of 100 precision oncology trials in `data/trials_normalized.json`.
 - Complete Sanity Studio schema suite in `studio/schemas/`.
-- Sanity Studio configuration in `studio/sanity.config.ts` and `studio/sanity.cli.ts`.
-- Automated dataset seed engine in `scripts/seed_sanity.ts` (dry-run validated, TypeScript checked with 0 errors).
-- Ready for Phase 1C (Next.js web app & Sanity Context MCP integration).
+- Live Sanity dataset seeded: 100 `clinicalTrial` documents and 5 `protocolRule` documents in project `6xsr2k42`.
+- Next.js web application running at `http://localhost:3000` with The Duel UI.
+- Ready for Phase 1D (3-Arm Benchmark Suite & automated DEV Submission article generator).
 
 ## Known Gotchas
 - Sanity Knowledge Bases (beta) have a hard ceiling of 150 documents. We constrain our oncology trial dataset to ~100 highly curated trials to fit comfortably within this budget while maximizing biomarker diversity.

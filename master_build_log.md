@@ -123,4 +123,22 @@
 * **Benchmark Judge**: **Gemini 3.8 Flash** (`@ai-sdk/google`). Selected for high reasoning capabilities, large context window, and ultra-low evaluation cost.
 * **Dataset Seeding**: Ready for live Sanity project insertion upon credential input in `.env`.
 
+---
+
+## Log Entry 005 | Phase 1C Completion: Next.js Web App, Sanity Agent & The Duel UI
+* **Timestamp**: 2026-09-30T12:30:00+05:30
+* **Author / Coordinator**: Implementation Agent
+* **Lead / Product Architect**: Abhishek
+* **Phase**: 1C — Next.js Web Application, Sanity Context Agent & The Duel Side-by-Side UI
+
+### 1. Implementation Summary
+* **Next.js Web Application**: Built modern, high-performance Next.js 16 application with React 19 in `path1` using `pnpm`.
+* **Live Sanity Seeding**: Seeded all 100 oncology clinical trials and 5 foundational protocol guidance rules into Sanity Project `6xsr2k42` (`production` dataset). Verified via live GROQ counts.
+* **Dual Data Engine (`lib/sanity.ts`)**: Auto-detects live Sanity connection (`@sanity/client`) with instant fallback to local normalized dataset (`data/trials_normalized.json`).
+* **Structured Agent (`lib/agent.ts`)**: Converts patient narrative into deterministic GROQ query enforcing strict biomarker targeting, active recruitment, prior therapy permission, and site location.
+* **Naive Keyword Search (`lib/naive_search.ts`)**: Unconstrained flat text search highlighting clinical hazards: chemo exclusion breaches, lexical collisions (e.g. eGFR renal lab vs EGFR oncogene), and disease mismatches.
+* **The Duel UI (`components/DuelArena.tsx`)**: Side-by-side split screen with live Scoreboard, 8 quick-fill clinical preset chips, responsive free-text input with filter overrides, and expandable GROQ query drawer.
+* **Build & Test Verification**: `pnpm build` creates production bundles in 758ms with 0 errors. All 8 presets and custom patient queries verified via automated integration tests.
+
+
 

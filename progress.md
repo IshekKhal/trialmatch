@@ -1,14 +1,11 @@
 # TrialMatch — Progress
 
-_Updated: September 30, 2026 | Session 3_
+_Updated: September 30, 2026 | Session 4_
 
 ## State
-Phase 1B completed. Sanity Studio schemas (`clinicalTrial` and `protocolRule`) and automated dataset import engine (`scripts/seed_sanity.ts`) implemented with strict TypeScript and `pnpm`. Includes dry-run verification mode that validates all 100 clinical trials (1,144 locations, 244 interventions) and 5 foundational protocol rules. Batch import configured with 25-doc transaction chunks, deterministic document IDs, and GROQ post-import verification. TypeScript compilation verifies with zero errors.
+Phase 1C completed. Next.js 16 web application with React 19 and "The Duel" interactive split-screen UI implemented in `path1` using `pnpm`. Features real-time live Scoreboard (100 trials corpus, safety accuracy comparison), 8 quick-fill clinical preset chips (1-click trigger), responsive free-text patient narrative input with structured filter overrides, and dual data retrieval engine connecting to live Sanity project `6xsr2k42` (with in-memory fallback). Live dataset seeded with all 100 trials and 5 protocol rules. Production build compiles in 758ms with zero errors. All 8 presets and custom patient queries pass automated integration tests.
 
 ## Next Steps
-1. Phase 1C Sub-Chat: Next.js 16 Web Application + Sanity Context MCP Integration & "The Duel" side-by-side interactive evaluation UI.
-2. Phase 1D Sub-Chat: 3-Arm Benchmark Suite & automated DEV Submission article generator.
+1. Phase 1D Sub-Chat: 3-Arm Benchmark Suite & automated DEV Submission article generator.
+2. Production deployment and demo recording.
 
-## Open Questions
-- Input of live Sanity credentials (`SANITY_PROJECT_ID` and `SANITY_API_WRITE_TOKEN`) into `.env` to execute live dataset seeding.
-- Sanity Context Knowledge Base endpoint and token configuration for Phase 1C agent integration.

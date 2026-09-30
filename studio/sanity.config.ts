@@ -6,7 +6,7 @@ export default defineConfig({
   name: 'default',
   title: 'TrialMatch Oncology Studio',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || process.env.SANITY_PROJECT_ID || 'dummy-project-id',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || process.env.SANITY_PROJECT_ID || '6xsr2k42',
   dataset: process.env.SANITY_STUDIO_DATASET || process.env.SANITY_DATASET || 'production',
 
   plugins: [structureTool()],
