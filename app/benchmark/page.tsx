@@ -25,94 +25,56 @@ export default function BenchmarkPage() {
 
   return (
     <main className="app-container">
-      {/* Header with Navigation */}
+      {/* Frosted Translucent Header with Apple Polish */}
       <header className="app-header">
-        <div className="brand-section">
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, #2563EB 0%, #10B981 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-              }}
-            >
-              <Dna size={22} color="#FFFFFF" />
-            </div>
-            <div>
-              <h1 className="brand-title">
-                Trial<span>Match</span>
-              </h1>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                Precision Oncology Protocol Matching &amp; Verification
-              </div>
-            </div>
-          </Link>
-          <span className="brand-badge">Path One: Sanity Context Agent</span>
-        </div>
+        <Link href="/" className="brand-section">
+          <div className="brand-icon-box">
+            <Dna size={20} />
+          </div>
+          <div className="brand-meta-group">
+            <h1 className="brand-title">
+              Trial<span className="brand-highlight">Match</span>
+            </h1>
+            <span className="brand-subtitle-text">
+              Precision Oncology Protocol Matching &amp; Verification
+            </span>
+          </div>
+        </Link>
 
         {/* Navigation Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="nav-tabs-pill-group" role="tablist">
           <Link
             href="/"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '13px',
-              fontWeight: 600,
-              color: 'var(--text-muted)',
-              background: 'var(--bg-panel)',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-color)',
-              transition: 'all 0.15s ease',
-            }}
+            role="tab"
+            aria-selected={false}
+            className="nav-tab-pill"
           >
-            <Swords size={16} />
-            The Duel (Live Match)
+            <Swords size={13} />
+            <span>The Duel (Live Match)</span>
           </Link>
 
           <Link
             href="/benchmark"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '13px',
-              fontWeight: 700,
-              color: '#0B1120',
-              background: 'var(--blue-accent)',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              border: '1px solid var(--blue-accent)',
-              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.3)',
-            }}
+            role="tab"
+            aria-selected={true}
+            className="nav-tab-pill active"
           >
-            <BarChart3 size={16} />
-            3-Arm Benchmark
+            <BarChart3 size={13} />
+            <span>3-Arm Benchmark</span>
           </Link>
+        </div>
 
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              color: 'var(--text-muted)',
-              background: 'var(--bg-panel-subtle)',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-color)',
-            }}
-          >
-            <Award size={14} color="var(--amber-main)" />
-            DEV x Sanity 2026
-          </span>
+        {/* Live Status Beacon & Challenge Badge */}
+        <div className="header-status-group">
+          <div className="status-beacon-pill">
+            <span className="status-beacon-dot" />
+            <span>Sanity Context MCP: Connected</span>
+          </div>
+
+          <div className="header-badge-pill">
+            <Award size={13} />
+            <span>DEV x Sanity 2026</span>
+          </div>
         </div>
       </header>
 

@@ -32,7 +32,7 @@
   --blue-bg: rgba(56, 189, 248, 0.1);
   --blue-border: rgba(56, 189, 248, 0.3);
 
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -81,11 +81,22 @@ a {
 
 /* Header */
 .app-header {
+  position: sticky;
+  top: 12px;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 10px 20px;
+  background: rgba(13, 19, 33, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  box-shadow: 
+    0 12px 32px -8px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   margin-bottom: 24px;
   flex-wrap: wrap;
   gap: 16px;
@@ -94,30 +105,137 @@ a {
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brand-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284C7 0%, #10B981 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.brand-meta-group {
+  display: flex;
+  flex-direction: column;
 }
 
 .brand-title {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   color: #FFFFFF;
+  line-height: 1.2;
 }
 
-.brand-title span {
-  color: var(--blue-accent);
+.brand-title span.brand-highlight {
+  background: linear-gradient(135deg, #38BDF8 0%, #34D399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
 }
 
-.brand-badge {
+.brand-subtitle-text {
   font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: -0.01em;
+}
+
+.nav-tabs-pill-group {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.nav-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-tab-pill:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-tab-pill.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  background: rgba(56, 189, 248, 0.12);
-  color: var(--blue-accent);
-  border: 1px solid var(--blue-border);
-  padding: 4px 10px;
-  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.header-status-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-beacon-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.status-beacon-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 10px #10B981;
+  animation: pulseDot 2.4s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+
+.header-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  padding: 5px 11px;
+  border-radius: 9999px;
 }
 
 /* Scoreboard */
@@ -168,18 +286,18 @@ a {
 
 /* Preset Chips Section */
 .chips-section {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .chips-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .chips-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -187,24 +305,40 @@ a {
 }
 
 .chips-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+}
+
+@media (max-width: 1180px) {
+  .chips-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .chips-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .preset-chip {
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  padding: 8px 14px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: flex;
   align-items: center;
   gap: 6px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .preset-chip:hover {
@@ -218,15 +352,17 @@ a {
   background: rgba(56, 189, 248, 0.15);
   border-color: var(--blue-accent);
   color: #FFFFFF;
+  font-weight: 600;
 }
 
 .chip-tag {
   background: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 4px;
   font-size: 10px;
   font-family: var(--font-mono);
   color: var(--blue-accent);
+  flex-shrink: 0;
 }
 
 /* Input Bar Section */
@@ -234,8 +370,8 @@ a {
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 32px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
 }
 
 .input-label-row {
@@ -279,13 +415,13 @@ a {
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 10px 14px;
   color: #FFFFFF;
   font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13.5px;
+  line-height: 1.45;
   resize: vertical;
-  min-height: 84px;
+  min-height: 68px;
   outline: none;
   transition: border-color 0.15s ease;
 }
@@ -382,14 +518,14 @@ a {
 /* The Duel Grid */
 .duel-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 24px;
   margin-top: 24px;
 }
 
 @media (max-width: 1024px) {
   .duel-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -397,6 +533,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 /* Column Headers */
@@ -562,10 +699,13 @@ a {
 }
 
 .card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1.35;
+  font-size: 14px;
+  font-weight: 600;
+  color: #F1F5F9;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  margin: 2px 0;
+  word-break: break-word;
 }
 
 .card-location {
@@ -708,3 +848,57 @@ a {
 .spin {
   animation: spin 1s linear infinite;
 }
+
+/* Duel Column Pagination */
+.duel-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.pagination-indicator {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.pagination-indicator strong {
+  color: #F1F5F9;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+

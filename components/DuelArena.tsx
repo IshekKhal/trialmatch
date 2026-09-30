@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
-import { ShieldCheck, AlertTriangle, Cpu, Search, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldCheck, AlertTriangle, Cpu, Search, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DuelResult } from '@/lib/types';
 import { StructuredResultCard } from './StructuredResultCard';
 import { KeywordResultCard } from './KeywordResultCard';
 import { GroqQueryDrawer } from './GroqQueryDrawer';
+
+const PAGE_SIZE = 6;
 
 interface DuelArenaProps {
   duelResult: DuelResult | null;
@@ -14,6 +16,14 @@ interface DuelArenaProps {
 }
 
 export function DuelArena({ duelResult, isLoading, error }: DuelArenaProps) {
+  const [structuredPage, setStructuredPage] = useState(1);
+  const [naivePage, setNaivePage] = useState(1);
+
+  useEffect(() => {
+    setStructuredPage(1);
+    setNaivePage(1);
+  }, [duelResult]);
+
   if (error) {
     return (
       <div className="empty-state" style={{ borderColor: 'var(--crimson-border)', color: 'var(--crimson-main)' }}>
@@ -86,6 +96,18 @@ export function DuelArena({ duelResult, isLoading, error }: DuelArenaProps) {
 
   const { structured, naive } = duelResult;
 
+  const totalStructuredPages = Math.ceil(structured.trials.length / PAGE_SIZE) || 1;
+  const pagedStructured = structured.trials.slice(
+    (structuredPage - 1) * PAGE_SIZE,
+    structuredPage * PAGE_SIZE
+  );
+
+  const totalNaivePages = Math.ceil(naive.trials.length / PAGE_SIZE) || 1;
+  const pagedNaive = naive.trials.slice(
+    (naivePage - 1) * PAGE_SIZE,
+    naivePage * PAGE_SIZE
+  );
+
   return (
     <div className="duel-grid">
       {/* LEFT COLUMN: Structured Sanity Agent */}
@@ -126,9 +148,41 @@ export function DuelArena({ duelResult, isLoading, error }: DuelArenaProps) {
             </div>
           </div>
         ) : (
-          structured.trials.map((match, idx) => (
-            <StructuredResultCard key={match.trial.nctId} match={match} index={idx} />
+          pagedStructured.map((match, idx) => (
+            <StructuredResultCard
+              key={match.trial.nctId}
+              match={match}
+              index={(structuredPage - 1) * PAGE_SIZE + idx}
+            />
           ))
+        )}
+
+        {totalStructuredPages > 1 && (
+          <div className="duel-pagination">
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() => setStructuredPage((prev) => Math.max(prev - 1, 1))}
+              disabled={structuredPage === 1}
+              aria-label="Previous Page"
+              title="Previous Page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <span className="pagination-indicator">
+              Page <strong>{structuredPage}</strong> of <strong>{totalStructuredPages}</strong> (Total {structured.trials.length} trials)
+            </span>
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() => setStructuredPage((prev) => Math.min(prev + 1, totalStructuredPages))}
+              disabled={structuredPage === totalStructuredPages}
+              aria-label="Next Page"
+              title="Next Page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         )}
       </div>
 
@@ -180,13 +234,41 @@ export function DuelArena({ duelResult, isLoading, error }: DuelArenaProps) {
             <div style={{ color: '#FFFFFF', fontWeight: 600 }}>No Keyword Matches Found</div>
           </div>
         ) : (
-          naive.trials.map((match, idx) => (
+          pagedNaive.map((match, idx) => (
             <KeywordResultCard
-              key={`${match.trial.nctId}-${idx}`}
+              key={`${match.trial.nctId}-${(naivePage - 1) * PAGE_SIZE + idx}`}
               match={match}
-              index={idx}
+              index={(naivePage - 1) * PAGE_SIZE + idx}
             />
           ))
+        )}
+
+        {totalNaivePages > 1 && (
+          <div className="duel-pagination">
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() => setNaivePage((prev) => Math.max(prev - 1, 1))}
+              disabled={naivePage === 1}
+              aria-label="Previous Page"
+              title="Previous Page"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <span className="pagination-indicator">
+              Page <strong>{naivePage}</strong> of <strong>{totalNaivePages}</strong> (Total {naive.trials.length} trials)
+            </span>
+            <button
+              type="button"
+              className="pagination-btn"
+              onClick={() => setNaivePage((prev) => Math.min(prev + 1, totalNaivePages))}
+              disabled={naivePage === totalNaivePages}
+              aria-label="Next Page"
+              title="Next Page"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
         )}
       </div>
     </div>

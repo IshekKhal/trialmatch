@@ -104,8 +104,15 @@ export function GroqQueryDrawer({
               borderRadius: '6px',
               border: '1px solid #1E293B',
               overflowX: 'auto',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
               color: '#38BDF8',
               marginBottom: '12px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '12px',
+              lineHeight: '1.5',
             }}
           >
             {groqQuery}
