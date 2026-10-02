@@ -39,15 +39,36 @@ export function auditProtocolSafety(
   const biomarker = (patient.biomarker || '').toLowerCase();
   const condition = (patient.condition || '').toLowerCase();
 
+  // Extract age and stage from narrative if not explicitly passed
+  let age = patient.age;
+  if (age === undefined) {
+    const ageMatch = narrative.match(/\b(\d{1,2})[- ]?(?:year[- ]?old|yo)\b/i);
+    if (ageMatch) {
+      age = parseInt(ageMatch[1], 10);
+    }
+  }
+
+  const stage = (patient.stage || '').toLowerCase();
+
   // 1. Chemotherapy Exclusion Hazard
+  const isChemoNaive =
+    priorTherapy.includes('no prior') ||
+    priorTherapy.includes('chemo-naive') ||
+    priorTherapy.includes('chemo naive') ||
+    narrative.includes('no prior') ||
+    narrative.includes('chemo-naive') ||
+    narrative.includes('chemo naive') ||
+    narrative.includes('not yet initiated');
+
   const hasPriorChemo =
-    priorTherapy.includes('chemo') ||
-    priorTherapy.includes('platinum') ||
-    priorTherapy.includes('folfox') ||
-    priorTherapy.includes('folfiri') ||
-    narrative.includes('platinum') ||
-    narrative.includes('chemotherapy') ||
-    narrative.includes('folfox');
+    !isChemoNaive &&
+    (priorTherapy.includes('chemo') ||
+      priorTherapy.includes('platinum') ||
+      priorTherapy.includes('folfox') ||
+      priorTherapy.includes('folfiri') ||
+      narrative.includes('platinum') ||
+      narrative.includes('chemotherapy') ||
+      narrative.includes('folfox'));
 
   const trialExcludesChemo =
     trial.priorTherapyRules?.chemotherapy === 'EXCLUDED' ||
@@ -222,16 +243,16 @@ export function auditProtocolSafety(
   }
 
   // 10. Demographic Age Window Mismatch
-  if (patient.age !== undefined) {
+  if (age !== undefined) {
     const minAge = trial.eligibility?.minimumAgeYears ?? 0;
     const maxAge = trial.eligibility?.maximumAgeYears ?? 120;
     const isPediatricTrial = textBlob.includes('pediatric') || maxAge <= 21;
 
-    if (patient.age < minAge || patient.age > maxAge || (patient.age >= 18 && isPediatricTrial)) {
+    if (age < minAge || age > maxAge || (age >= 18 && isPediatricTrial)) {
       return {
         isViolation: true,
         violationType: 'DEMOGRAPHIC_AGE_MISMATCH',
-        violationMessage: `FAILED: Demographic age mismatch. Protocol restricted to age ${minAge}-${maxAge} years; excludes ${patient.age}yo adult.`,
+        violationMessage: `FAILED: Demographic age mismatch. Protocol restricted to age ${minAge}-${maxAge} years; excludes ${age}yo adult.`,
         protocolRule: 'Protocol Eligibility Age Limit',
       };
     }

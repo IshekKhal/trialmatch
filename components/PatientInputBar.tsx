@@ -37,13 +37,17 @@ export function PatientInputBar({
     if (e) e.preventDefault();
     if (!freeText.trim() && !condition.trim() && !biomarker.trim()) return;
 
-    // Only include structured filter overrides if the user explicitly opened the override panel
+    const isPresetUnmodified = Boolean(
+      initialProfile && freeText.trim() === initialProfile.freeText?.trim()
+    );
+
+    // Retain structured parameters when running an unmodified preset scenario or explicit manual overrides
     onSubmit({
       freeText,
-      condition: showFilters && condition.trim() ? condition.trim() : undefined,
-      biomarker: showFilters && biomarker.trim() ? biomarker.trim() : undefined,
-      priorTherapy: showFilters && priorTherapy.trim() ? priorTherapy.trim() : undefined,
-      state: showFilters && state.trim() ? state.trim() : undefined,
+      condition: (showFilters || isPresetUnmodified) && condition.trim() ? condition.trim() : undefined,
+      biomarker: (showFilters || isPresetUnmodified) && biomarker.trim() ? biomarker.trim() : undefined,
+      priorTherapy: (showFilters || isPresetUnmodified) && priorTherapy.trim() ? priorTherapy.trim() : undefined,
+      state: (showFilters || isPresetUnmodified) && state.trim() ? state.trim() : undefined,
     });
   };
 

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-02T10:58:38.782Z",
+  "timestamp": "2026-10-02T12:17:28.594Z",
   "corpusSize": 100,
   "testCaseCount": 10,
   "arm1Stats": {
@@ -13,7 +13,7 @@
   "arm2Stats": {
     "name": "Naive Flat Keyword Search",
     "avgPrecision": 60,
-    "totalSafetyViolations": 153,
+    "totalSafetyViolations": 152,
     "totalHallucinations": 0,
     "auditabilityRate": 0,
     "avgReturned": 41.5
@@ -21,10 +21,10 @@
   "arm3Stats": {
     "name": "Bare LLM (Zero Database Access)",
     "avgPrecision": 0,
-    "totalSafetyViolations": 21,
-    "totalHallucinations": 21,
+    "totalSafetyViolations": 22,
+    "totalHallucinations": 22,
     "auditabilityRate": 0,
-    "avgReturned": 2.1
+    "avgReturned": 2.2
   },
   "results": [
     {
@@ -108,7 +108,7 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Lung (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Absolute Exclusion Criteria Precedence).",
-        "executionTimeMs": 857
+        "executionTimeMs": 572
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -176,7 +176,7 @@
           }
         ],
         "summary": "Returned 69 matches by flat keyword matching; 31 trials (45%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 12
+        "executionTimeMs": 11
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -187,17 +187,17 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Based on the patient's diagnosis of Stage IV metastatic NSCLC with an EGFR Exon 20 insertion mutation and prior progression on platinum-based chemotherapy, here are two relevant targeted therapy clinical trials with active sites in Texas:\n\n### Trial 1\n* **NCT ID:** NCT04036682\n* **Title:** Phase 1/2a Study of CLN-081 in Patients With Non-Small Cell Lung Cancer (NSCLC) Harboring EGFR Exon 20 Insertion Mutations\n* **Agent:** Zipalertinib (CLN-081)\n* **Trial Phase:** Phase 1 / Phase 2\n* **Locations in Texas:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center\n  * **San Antonio, Texas:** NEXT Oncology\n\n---\n\n### Trial 2\n* **NCT ID:** NCT03974022\n* **Title:** A Phase I/II Study of DZD9008 in Patients With Advanced Non-Small Cell Lung Cancer Harboring EGFR or HER2 Mutation (WU-KONG1)\n* **Agent:** Sunvozertinib (DZD9008)\n* **Trial Phase:** Phase 1 / Phase 2\n* **Location in Texas:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center",
+        "rawOutput": "Here are two active Phase 1b/2 or Phase 2 clinical trials evaluating targeted therapies specifically designed for patients with metastatic NSCLC harboring *EGFR* Exon 20 insertion mutations following platinum-based chemotherapy, with trial sites located in Texas:\n\n---\n\n### **Trial 1: The FURTHER Study (Furmonertinib)**\n* **NCT ID:** [NCT05607550](https://clinicaltrials.gov/study/NCT05607550)\n* **Official Title:** A Study of Furmonertinib in Patients With Advanced or Metastatic Non-Small Cell Lung Cancer Harboring EGFR or HER2 Mutations (FURTHER)\n* **Phase:** Phase 1b/2\n* **Target Population Match:** Evaluates furmonertinib (an oral, brain-penetrant, mutant-selective EGFR inhibitor) in patients with locally advanced or metastatic NSCLC harboring *EGFR* Exon 20 insertion mutations, including a dedicated cohort for patients with disease progression following prior platinum-based systemic chemotherapy.\n* **Texas Location:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center\n\n---\n\n### **Trial 2: WU-KONG1 (Sunvozertinib / DZD9008)**\n* **NCT ID:** [NCT03974022](https://clinicaltrials.gov/study/NCT03974022)\n* **Official Title:** A Study of Sunvozertinib (DZD9008) in Patients With Advanced Non-Small Cell Lung Cancer Harboring EGFR or HER2 Mutations (WU-KONG1)\n* **Phase:** Phase 1/2\n* **Target Population Match:** Evaluates sunvozertinib, an oral, selective EGFR Exon 20 insertion inhibitor. The Phase 2 portion specifically includes patients with advanced/metastatic NSCLC with *EGFR* Exon 20 insertions who have received prior platinum-based doublet chemotherapy.\n* **Texas Locations:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center\n  * **San Antonio, Texas:** NEXT Oncology",
         "extractedNcts": [
-          "NCT04036682",
+          "NCT05607550",
           "NCT03974022"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04036682 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT05607550 does not exist in verified oncology corpus.",
           "HALLUCINATED: NCT03974022 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 6649
+        "executionTimeMs": 9064
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 31 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -271,7 +271,7 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Colorectal (KRAS) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY & Organ Site Metastatic Protocol Hierarchy.",
-        "executionTimeMs": 866
+        "executionTimeMs": 601
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -297,7 +297,7 @@
           }
         ],
         "summary": "Returned 14 matches by flat keyword matching; 1 trials (7%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 4
+        "executionTimeMs": 5
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -308,7 +308,7 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Based on the patient's clinical profile (Stage IV colorectal adenocarcinoma with a KRAS G12C mutation, post-frontline FOLFOX, located in California), here are two active clinical trials evaluating targeted KRAS G12C therapy combinations:\n\n---\n\n### **Trial 1: KRYSTAL-10**\n* **NCT ID:** NCT04793958\n* **Title:** *Phase 3 Study of MRTX849 in Combination With Cetuximab Versus Chemotherapy in Patients With Advanced Colorectal Cancer With KRAS G12C Mutation (KRYSTAL-10)*\n* **Key Focus:** Evaluates the selective KRAS G12C inhibitor adagrasib (MRTX849) in combination with the EGFR inhibitor cetuximab versus standard second-line chemotherapy in patients with KRAS G12C-mutated metastatic colorectal cancer who have experienced disease progression following a fluoropyrimidine- and oxaliplatin-based regimen (such as FOLFOX).\n* **California Locations:**\n  * **City of Hope Comprehensive Cancer Center** – Duarte, California\n  * **UCLA Medical Center / Jonsson Comprehensive Cancer Center** – Los Angeles, California\n  * **UC San Diego Moores Cancer Center** – La Jolla, California\n  * **UC Davis Comprehensive Cancer Center** – Sacramento, California\n\n---\n\n### **Trial 2: CodeBreaK 300**\n* **NCT ID:** NCT05198934\n* **Title:** *A Phase 3 Study to Evaluate the Efficacy and Safety of Sotorasib Administered With Panitumumab Versus Investigator's Choice in Participants With Previously Treated Metastatic Colorectal Cancer With KRAS G12C Mutation (CodeBreaK 300)*\n* **Key Focus:** Evaluates sotorasib (AMG 510) administered at two dose levels in combination with the anti-EGFR antibody panitumumab versus standard investigator's choice (trifluridine/tipiracil or regorafenib) in patients with KRAS G12C-mutant mCRC previously treated with frontline chemotherapy.\n* **California Locations:**\n  * **Stanford Cancer Institute** – Stanford, California\n  * **City of Hope Comprehensive Cancer Center** – Duarte, California\n  * **UC Irvine Health / Chao Family Comprehensive Cancer Center** – Orange, California\n  * **UCLA Medical Center** – Los Angeles, California",
+        "rawOutput": "Here are two active clinical trials evaluating targeted therapies for patients with KRAS G12C-mutated metastatic colorectal cancer, with participating trial sites in California:\n\n---\n\n### **1. KRYSTAL-10**\n* **NCT ID:** [NCT04793958](https://clinicaltrials.gov/study/NCT04793958)\n* **Official Title:** *A Phase 3 Study of MRTX849 (Adagrasib) in Combination With Cetuximab Versus Chemotherapy in Patients With Advanced Colorectal Cancer With KRAS G12C Mutation*\n* **Phase:** Phase 3\n* **Study Design/Intervention:** Evaluates the efficacy of the selective KRAS G12C inhibitor **adagrasib (MRTX849)** administered in combination with the EGFR-inhibitor **cetuximab**, compared to standard second-line chemotherapy (such as FOLFIRI or mFOLFOX6) in patients with previously treated unresectable or metastatic colorectal cancer harboring a KRAS G12C mutation.\n* **Why It Fits:** Designed specifically for patients who have progressed during or following first-line fluoropyrimidine- and oxaliplatin-based chemotherapy (such as FOLFOX).\n* **California Trial Locations (examples):**\n  * **City of Hope Comprehensive Cancer Center** – Duarte, CA\n  * **UC San Diego Moores Cancer Center** – La Jolla, CA\n  * **Stanford Cancer Institute** – Stanford, CA\n\n---\n\n### **2. CodeBreaK 300**\n* **NCT ID:** [NCT05198934](https://clinicaltrials.gov/study/NCT05198934)\n* **Official Title:** *A Phase 3 Study Comparing Sotorasib Plus Panitumumab Versus Investigator's Choice of Trifluridine and Tipiracil or Regorafenib in Previously Treated Metastatic Colorectal Cancer*\n* **Phase:** Phase 3\n* **Study Design/Intervention:** Evaluates the combination of the KRAS G12C inhibitor **sotorasib (AMG 510)** (at two dose levels: 960 mg or 240 mg daily) plus the anti-EGFR antibody **panitumumab** versus standard-of-care investigator’s choice therapy in patients with KRAS G12C-mutated metastatic colorectal cancer.\n* **Why It Fits:** Open to metastatic colorectal cancer patients with confirmed KRAS G12C mutations who have received prior fluoropyrimidine- and oxaliplatin-based regimens.\n* **California Trial Locations (examples):**\n  * **USC Norris Comprehensive Cancer Center** – Los Angeles, CA\n  * **UC Davis Comprehensive Cancer Center** – Sacramento, CA\n  * **UCLA Jonsson Comprehensive Cancer Center** – Los Angeles, CA\n\n---\n\n*Note: Eligibility criteria, trial status, and open enrollment at specific institutional sites should be confirmed directly with the study coordinators or treating oncologist.*",
         "extractedNcts": [
           "NCT04793958",
           "NCT05198934"
@@ -318,7 +318,7 @@
           "HALLUCINATED: NCT05198934 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 5973
+        "executionTimeMs": 8046
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -399,7 +399,7 @@
           }
         ],
         "summary": "Found 3 protocol-compliant trials matching Breast (HER2) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY (Quantitative Biomarker Expression Cutoffs).",
-        "executionTimeMs": 831
+        "executionTimeMs": 822
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -470,7 +470,7 @@
           }
         ],
         "summary": "Returned 72 matches by flat keyword matching; 34 trials (47%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 9
+        "executionTimeMs": 7
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -481,7 +481,7 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Here are two clinical trials evaluating antibody-drug conjugates (ADCs) for metastatic HER2-low breast cancer with active study locations in Florida:\n\n---\n\n### **Trial 1: DYNASTY-Breast02**\n* **NCT ID:** NCT06018337  \n* **Title:** A Phase 3, Open-label, Randomized Study of DB-1303/BNT323 Versus Investigator's Choice Chemotherapy in Patients With Hormone Receptor-Positive, HER2-Low Metastatic Breast Cancer Whose Disease Has Progressed on Endocrine Therapy  \n* **Agent Evaluated:** DB-1303/BNT323 (a novel, third-generation HER2-directed antibody-drug conjugate utilizing a topoisomerase I inhibitor payload)  \n* **Florida Location(s):**  \n  * Moffitt Cancer Center – Tampa, Florida  \n  * Mayo Clinic – Jacksonville, Florida  \n\n---\n\n### **Trial 2: DESTINY-Breast08**\n* **NCT ID:** NCT04556773  \n* **Title:** A Phase 1b/2 Study of Trastuzumab Deruxtecan (T-DXd) in Combination With Other Anticancer Agents in Patients With HER2-Low Metastatic Breast Cancer  \n* **Agent Evaluated:** Trastuzumab Deruxtecan (T-DXd) in combination with endocrine therapies and targeted agents  \n* **Florida Location(s):**  \n  * Sylvester Comprehensive Cancer Center, University of Miami – Miami, Florida  \n  * Moffitt Cancer Center – Tampa, Florida",
+        "rawOutput": "Here are two active clinical trials evaluating antibody-drug conjugates (ADCs) for patients with HER2-low metastatic breast cancer with clinical trial sites in Florida:\n\n### Trial 1: DYNASTY-Breast02\n* **NCT ID:** NCT06018337\n* **Title:** A Study of DB-1303/BNT326 Versus Investigator's Choice Chemotherapy in Human Epidermal Growth Factor Receptor 2 (HER2)-Low, Hormone Receptor-Positive Metastatic Breast Cancer Whose Disease Has Progressed on Endocrine Therapy (DYNASTY-Breast02)\n* **Description:** This randomized Phase 3 trial investigates DB-1303/BNT326, a third-generation HER2-directed antibody-drug conjugate utilizing a novel topoisomerase I inhibitor payload, designed to overcome resistance and demonstrate high antitumor activity in HER2-low settings.\n* **Florida Locations:**\n  * Moffitt Cancer Center (Tampa, Florida)\n  * Sylvester Comprehensive Cancer Center / University of Miami (Miami, Florida)\n\n---\n\n### Trial 2: DESTINY-Breast08\n* **NCT ID:** NCT04556773\n* **Title:** A Phase 1b/2 Study of Trastuzumab Deruxtecan (T-DXd) in Combination With Other Anticancer Agents in Patients With HER2-Low Metastatic Breast Cancer\n* **Description:** This modular study explores the next step in ADC therapy by evaluating the safety and efficacy of novel combination regimens (including ADCs paired with targeted therapies such as endocrine therapies, AKT inhibitors, or immunotherapy) specifically tailored for patients with HER2-low advanced/metastatic breast cancer.\n* **Florida Locations:**\n  * Moffitt Cancer Center (Tampa, Florida)\n  * Mayo Clinic Florida (Jacksonville, Florida)",
         "extractedNcts": [
           "NCT06018337",
           "NCT04556773"
@@ -491,7 +491,7 @@
           "HALLUCINATED: NCT04556773 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 9679
+        "executionTimeMs": 14297
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 34 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -554,7 +554,7 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Melanoma (BRAF) with 0 safety exclusions. Verified against RULE-PHASE-APPROPRIATENESS (Phase Rigor and Line-of-Therapy Safety).",
-        "executionTimeMs": 868
+        "executionTimeMs": 521
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -618,7 +618,7 @@
           }
         ],
         "summary": "Returned 30 matches by flat keyword matching; 27 trials (90%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 5
+        "executionTimeMs": 6
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -629,17 +629,17 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Here are two active Phase 3 confirmatory randomized clinical trials enrolling patients with unresectable Stage III cutaneous melanoma (including BRAF V600E-mutant disease) with trial sites in New York:\n\n---\n\n### **1. Fianlimab + Cemiplimab vs. Pembrolizumab in Advanced Melanoma**\n* **NCT ID:** NCT05357898  \n* **Title:** A Randomized, Double-blind, Phase 3 Study of Fianlimab (REGN3767, Anti-LAG-3) and Cemiplimab Versus Pembrolizumab in Patients With Previously Untreated Unresectable Locally Advanced or Metastatic Melanoma  \n* **Phase:** Phase 3  \n* **Location (New York):** \n  * Mount Sinai Health System – New York, NY\n  * NYU Langone Health – New York, NY\n  * Additional participating academic medical centers in New York State  \n* **Study Overview & Relevance:**  \n  This global, randomized Phase 3 trial evaluates the combination of fianlimab (a LAG-3 inhibitor) plus cemiplimab (an anti–PD-1) compared to standard-of-care pembrolizumab monotherapy. It is open to patients with histologically confirmed unresectable Stage III or Stage IV cutaneous melanoma regardless of BRAF mutation status (BRAF V600–mutant patients are eligible).\n\n---\n\n### **2. IO102-IO103 Vaccine Plus Pembrolizumab vs. Pembrolizumab Alone (IOB-013 / KEYNOTE-D18)**\n* **NCT ID:** NCT05155254  \n* **Title:** A Phase 3, Randomized, Open-Label Study of IO102-IO103 in Combination With Pembrolizumab Versus Pembrolizumab Alone in Patients With Previously Untreated, Unresectable, or Metastatic Melanoma  \n* **Phase:** Phase 3  \n* **Location (New York):** \n  * Memorial Sloan Kettering Cancer Center – New York, NY\n  * Columbia University Irving Medical Center – New York, NY  \n* **Study Overview & Relevance:**  \n  This randomized Phase 3 trial investigates the efficacy and safety of adding IO102-IO103 (an IDO/PD-L1 targeting dual-antigen immune-modulatory vaccine) to pembrolizumab versus pembrolizumab alone. It enrolls patients with unresectable Stage IIIC/IIID or Stage IV cutaneous melanoma and explicitly accommodates patients with documented BRAF V600 mutations.",
+        "rawOutput": "Here are two active Phase 3 randomized clinical trials evaluating therapies for unresectable advanced melanoma (including Stage IIIC harboring the BRAF V600E mutation) with active study sites in New York:\n\n---\n\n### **Trial 1: The STARBOARD Study**\n* **NCT ID:** NCT04511013  \n* **Title:** *A Study of Encorafenib Plus Binimetinib With or Without Pembrolizumab in Participants With Previously Untreated, Unresectable or Metastatic BRAF V600E/K Mutation-Positive Melanoma (STARBOARD)*  \n* **Phase:** Phase 3  \n* **Locations in New York:**\n  * Memorial Sloan Kettering Cancer Center (New York, NY)\n  * NYU Langone Health (New York, NY)\n* **Clinical Overview:**  \n  This confirmatory randomized trial specifically targets patients with unresectable Stage III or Stage IV cutaneous melanoma harboring documented BRAF V600E or V600K mutations. It evaluates whether combining BRAF-targeted therapy (encorafenib + binimetinib) with anti–PD-1 checkpoint inhibition (pembrolizumab) improves progression-free and overall survival compared to standard-of-care targeted therapy alone.\n\n---\n\n### **Trial 2: Fianlimab + Cemiplimab vs. Pembrolizumab in Advanced Melanoma**\n* **NCT ID:** NCT05352672  \n* **Title:** *A Study to Compare Fianlimab (REGN3767) and Cemiplimab to Pembrolizumab in Patients With Previously Untreated Advanced Melanoma*  \n* **Phase:** Phase 3  \n* **Locations in New York:**\n  * Icahn School of Medicine at Mount Sinai (New York, NY)\n  * Memorial Sloan Kettering Cancer Center (New York, NY)\n* **Clinical Overview:**  \n  This global, randomized Phase 3 trial evaluates the novel anti–LAG-3 inhibitor fianlimab in combination with the anti–PD-1 agent cemiplimab versus standard-of-care pembrolizumab monotherapy. It is open to patients with previously untreated unresectable Stage III (including IIIC) or Stage IV melanoma, with stratification accommodating BRAF-mutant cohorts.",
         "extractedNcts": [
-          "NCT05357898",
-          "NCT05155254"
+          "NCT04511013",
+          "NCT05352672"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT05357898 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT05155254 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04511013 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT05352672 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 13456
+        "executionTimeMs": 12319
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 27 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -699,7 +699,7 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Ovarian (BRCA) with 0 safety exclusions. Verified against RULE-WASHOUT-WINDOWS & Recurrence Sensitivity Hierarchy.",
-        "executionTimeMs": 903
+        "executionTimeMs": 519
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -725,33 +725,35 @@
           }
         ],
         "summary": "Returned 13 matches by flat keyword matching; 1 trials (8%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 5
+        "executionTimeMs": 6
       },
       "arm3": {
         "arm": "arm3_bare_llm",
         "name": "Bare LLM (Zero Database Access)",
-        "totalReturned": 3,
+        "totalReturned": 4,
         "precision": 0,
-        "safetyViolations": 3,
-        "hallucinations": 3,
+        "safetyViolations": 4,
+        "hallucinations": 4,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Here are two clinical trials evaluating PARP inhibitor combinations or novel maintenance strategies for recurrent platinum-sensitive, *BRCA*-mutated ovarian cancer with active study sites in Ohio:\n\n---\n\n### **Trial 1: CAPRI / Ceralasertib Plus Olaparib Combination**\n* **NCT ID:** NCT03462212 (or related platform study NCT04065269)\n* **Title:** *Phase II Study of Olaparib in Combination with the ATR Inhibitor Ceralasertib (AZD6738) in Recurrent High-Grade Serous Ovarian Cancer*\n* **Location in Ohio:** \n  * The Ohio State University Comprehensive Cancer Center (OSUCCC – James), Columbus, Ohio\n  * Cleveland Clinic Taussig Cancer Institute, Cleveland, Ohio\n* **Clinical Rationale:** \n  * **Target Population:** Recurrent platinum-sensitive epithelial ovarian carcinoma.\n  * **Mechanism:** Evaluates the synergy between an oral PARP inhibitor (olaparib) and an ATR kinase inhibitor (ceralasertib). ATR inhibition impairs the replication stress response, enhancing the antitumor efficacy of PARP inhibition, particularly in homologous recombination-deficient (e.g., *BRCA1*-mutated) tumors.\n\n---\n\n### **Trial 2: Novel Immuno-PARP Maintenance Combination**\n* **NCT ID:** NCT03522246\n* **Title:** *A Phase II Study Evaluating PARP Inhibitor (Olaparib) Maintenance in Combination with Immune Checkpoint Inhibition (Pembrolizumab) in Patients with Platinum-Sensitive Recurrent Ovarian Cancer*\n* **Location in Ohio:** \n  * The Ohio State University Comprehensive Cancer Center, Columbus, Ohio\n  * University Hospitals Seidman Cancer Center / Case Western Reserve University, Cleveland, Ohio\n* **Clinical Rationale:**\n  * **Target Population:** Platinum-sensitive recurrent ovarian cancer following a response to second-line platinum-based chemotherapy.\n  * **Mechanism:** *BRCA1*-mutated ovarian tumors accumulate double-strand DNA breaks, increasing neoantigen load and genomic instability. Combining maintenance PARP inhibition with anti–PD-1 therapy aims to overcome adaptive immune resistance and extend duration of response beyond single-agent PARP inhibitor maintenance alone.\n\n---\n\n*Note: Eligibility requires restaging and confirmation of ongoing platinum sensitivity following platinum-based re-induction therapy. Contact the local investigational site coordinators at OSUCCC or Cleveland Clinic to confirm current cohort openings.*",
+        "rawOutput": "Here are two active clinical trials in Ohio evaluating PARP inhibitor combinations or novel maintenance strategies suitable for a patient with platinum-sensitive, recurrent *BRCA1*-mutated high-grade serous ovarian cancer:\n\n---\n\n### **Trial 1: ICON9**\n* **NCT ID:** NCT03574922\n* **Title:** An International Randomized Phase III Trial of Maintenance Cediranib Along With Olaparib Versus Olaparib Alone in Patients With Relapsed Platinum-Sensitive Ovarian Cancer (ICON9)\n* **Location:** \n  * The Ohio State University Comprehensive Cancer Center (Arthur G. James Cancer Hospital & Richard J. Solove Research Institute), Columbus, Ohio\n  * Cleveland Clinic Taussig Cancer Center, Cleveland, Ohio\n* **Rationale & Relevance:** \n  This phase III trial is directly designed for patients with relapsed, platinum-sensitive epithelial ovarian, fallopian tube, or primary peritoneal cancer who have had a response to subsequent platinum-based chemotherapy. It evaluates whether the combination of the VEGFR inhibitor cediranib and the PARP inhibitor olaparib improves outcomes compared to standard olaparib monotherapy as maintenance treatment in this setting.\n\n---\n\n### **Trial 2: CAPRI (or ATR + PARP Combination Protocol)**\n* **NCT ID:** NCT03462342 / NCT03682289 (related master/combination protocols including NCT03644342)\n* **Title:** Phase II Study of Ceralasertib (AZD6738) in Combination With Olaparib in Patients With Recurrent Ovarian Cancer\n* **Location:** \n  * The Ohio State University Comprehensive Cancer Center, Columbus, Ohio\n* **Rationale & Relevance:** \n  This study evaluates the combination of olaparib (PARP inhibitor) with ceralasertib (an ATR kinase inhibitor) in patients with recurrent high-grade serous ovarian carcinoma. Combining an ATR inhibitor with a PARP inhibitor is designed to overcome or delay PARP inhibitor resistance mechanisms and enhance DNA damage response disruption, particularly in tumors with homologous recombination deficiencies like *BRCA1* mutations.",
         "extractedNcts": [
-          "NCT03462212",
-          "NCT04065269",
-          "NCT03522246"
+          "NCT03574922",
+          "NCT03462342",
+          "NCT03682289",
+          "NCT03644342"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT03462212 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT04065269 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT03522246 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT03574922 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03462342 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03682289 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03644342 does not exist in verified oncology corpus."
         ],
-        "summary": "Bare LLM produced 3 trial recommendations with 3 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 16577
+        "summary": "Bare LLM produced 4 trial recommendations with 4 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
+        "executionTimeMs": 22808
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 3 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 4 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -797,7 +799,7 @@
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE (Targeted Therapy Prior Exposure Rules)",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Prostate (BRCA) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Targeted Therapy Prior Exposure Rules).",
-        "executionTimeMs": 1334
+        "executionTimeMs": 721
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -857,17 +859,17 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Here are two active clinical trials matching this patient's profile:\n\n### **Trial 1: The PETRA Study**\n* **NCT ID:** NCT04644835\n* **Title:** A Phase 1/2a Study to Evaluate the Safety, Tolerability, and Pharmacokinetics of AZD5305 as Monotherapy and in Combination With Anti-cancer Agents in Patients With Advanced Solid Malignancies\n* **Overview & Relevance:** This trial evaluates saruparib (AZD5305), a next-generation, highly selective PARP1 inhibitor designed to maintain efficacy with potentially lower hematologic toxicity than first-generation PARP inhibitors. It enrolls patients with advanced/metastatic solid tumors—specifically including mCRPC—harboring DNA damage response alterations such as *BRCA1*, *BRCA2*, or *PALB2*, who have progressed on standard therapies such as novel androgen receptor pathway inhibitors (e.g., enzalutamide).\n* **Location in Pennsylvania:** \n  * Abramson Cancer Center / Hospital of the University of Pennsylvania, Philadelphia, Pennsylvania\n\n---\n\n### **Trial 2: The TAPUR Study**\n* **NCT ID:** NCT02693535\n* **Title:** Targeted Agent and Profiling Utilization Registry (TAPUR) Study\n* **Overview & Relevance:** The TAPUR study is a pragmatic, multi-center precision medicine basket trial sponsored by ASCO. It tests targeted anticancer therapies in patients with advanced cancers harboring actionable genomic alterations. Patients with Stage IV mCRPC carrying a somatic *BRCA1* or *BRCA2* alteration who have experienced disease progression on prior therapy (including enzalutamide) can be matched to cohorts receiving PARP-inhibitor therapy (such as olaparib or talazoparib).\n* **Locations in Pennsylvania:** \n  * UPMC Hillman Cancer Center, Pittsburgh, Pennsylvania\n  * Penn State Cancer Institute, Hershey, Pennsylvania\n  * *Additional community sites participating across Pennsylvania*",
+        "rawOutput": "Here are two active clinical trials evaluating PARP inhibitor and targeted combination strategies for patients with *BRCA*-altered metastatic castration-resistant prostate cancer (mCRPC) with prior enzalutamide exposure, featuring sites in Pennsylvania:\n\n---\n\n### **Trial 1: The PETRA Trial**\n* **NCT ID:** NCT04644835  \n* **Title:** A Phase I/IIa, Open-Label, Multi-Centre Study to Assess the Safety, Tolerability, Pharmacokinetics and Preliminary Anti-Tumour Activity of Ascending Doses of AZD5305 as Monotherapy and in Combination With Anti-Cancer Agents in Patients With Advanced Solid Malignancies (PETRA)\n* **Location in Pennsylvania:** \n  * Abramson Cancer Center / Hospital of the University of Pennsylvania, Philadelphia, PA\n* **Relevance:** \n  * Investigates **saruparib (AZD5305)**, a next-generation, highly selective PARP1 inhibitor and \"trapper\" engineered to maintain potent anti-tumor activity in *BRCA1/2*-deficient cancers with improved tolerability compared to first-generation PARP inhibitors. \n  * Enrolls advanced solid tumors, including pretreated mCRPC with prior progression on androgen receptor pathway inhibitors (such as enzalutamide).\n\n---\n\n### **Trial 2: The TRESR Trial**\n* **NCT ID:** NCT04497116  \n* **Title:** A Phase 1/2 Study of RP-3500 Alone or in Combination With Other Anti-cancer Therapies in Patients With Advanced Solid Tumors Harboring DDR Alterations (TRESR)\n* **Location in Pennsylvania:** \n  * University of Pennsylvania / Abramson Cancer Center, Philadelphia, PA\n* **Relevance:** \n  * Evaluates **camonsertib (RP-3500)**, an oral ATR kinase inhibitor, administered as monotherapy or in combination with the PARP inhibitor **talazoparib**.\n  * Targets tumors with specific DNA damage response (DDR) deficiencies, including *BRCA2* alterations. It is designed to overcome or delay PARP inhibitor resistance in patients with advanced metastatic cancers (including mCRPC) previously treated with standard-of-care novel hormonal agents.",
         "extractedNcts": [
           "NCT04644835",
-          "NCT02693535"
+          "NCT04497116"
         ],
         "hallucinationDetails": [
           "HALLUCINATED: NCT04644835 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT02693535 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04497116 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 19141
+        "executionTimeMs": 20706
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."
@@ -916,7 +918,7 @@
         "protocolRuleCited": "RULE-BIOMARKER-SPECIFICITY (Biomarker Allelic Polarity: Mutant vs Wild-Type)",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Pancreatic (KRAS) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY (Biomarker Allelic Polarity: Mutant vs Wild-Type).",
-        "executionTimeMs": 1325
+        "executionTimeMs": 1002
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -942,7 +944,7 @@
           "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
           "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
           "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
-          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
           "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type."
         ],
         "sampleViolations": [
@@ -966,7 +968,7 @@
           }
         ],
         "summary": "Returned 14 matches by flat keyword matching; 13 trials (93%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 4
+        "executionTimeMs": 3
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -977,17 +979,17 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Here are two active clinical trials with recruiting sites in Massachusetts suitable for a chemotherapy-naive patient with borderline resectable pancreatic ductal adenocarcinoma:\n\n---\n\n### **Trial 1**\n* **NCT ID:** NCT03563248  \n* **Title:** Losartan and Nivolumab in Combination With FOLFIRINOX and SBRT in Locally Advanced and Borderline Resectable Pancreatic Cancer  \n* **Location:** \n  * Massachusetts General Hospital, Boston, Massachusetts  \n* **Overview & Rationale:**  \n  This Phase II study evaluates adding losartan (an angiotensin II receptor blocker that reduces tumor microenvironment desmoplasia) and the PD-1 inhibitor nivolumab to standard multi-agent neoadjuvant FOLFIRINOX chemotherapy, followed by stereotactic body radiation therapy (SBRT), prior to surgical resection. It specifically enrolls patients who are chemotherapy-naive with borderline resectable or locally advanced pancreatic adenocarcinoma to increase complete surgical resection ($R0$) rates.\n\n---\n\n### **Trial 2**\n* **NCT ID:** NCT03941093  \n* **Title:** Study of Pamrevlumab in Combination With Gemcitabine and Nab-Paclitaxel in Patients With Locally Advanced, Unresectable or Borderline Resectable Pancreatic Cancer  \n* **Location:** \n  * Dana-Farber Cancer Institute, Boston, Massachusetts  \n  * Beth Israel Deaconess Medical Center, Boston, Massachusetts  \n* **Overview & Rationale:**  \n  This randomized trial investigates standard frontline doublet chemotherapy (gemcitabine plus nab-paclitaxel) with or without pamrevlumab (an anti-CTGF [connective tissue growth factor] antibody aimed at inhibiting pancreatic stroma-mediated fibrosis) in the neoadjuvant setting. It targets patients with borderline resectable or unresectable pancreatic cancer who have received no prior systemic therapy, evaluating whether targeting tumor stroma enhances resectability and progression-free survival.\n\n---\n\n*(Note: In patients with confirmed **KRAS wild-type** pancreatic cancer, comprehensive genomic profiling should also be closely reviewed for actionable oncogenic drivers such as NRG1, NTRK, RET, or BRAF alterations, or microsatellite instability [MSI-H], which may open additional targeted/basket trial opportunities if standard neoadjuvant approaches require reconsideration.)*",
+        "rawOutput": "Here are two active clinical trials evaluating neoadjuvant therapy for patients with borderline resectable pancreatic ductal adenocarcinoma with study locations in Massachusetts:\n\n---\n\n### **Trial 1**\n* **NCT ID:** NCT03563248\n* **Title:** Total Neoadjuvant Therapy With FOLFIRINOX, Losartan, and Nivolumab in Borderline Resectable and Locally Advanced Pancreatic Adenocarcinoma\n* **Location:** \n  * Massachusetts General Hospital Cancer Center, Boston, Massachusetts\n* **Relevance:** This phase II trial evaluates an intensified frontline neoadjuvant regimen combining systemic chemotherapy (FOLFIRINOX), an angiotensin receptor blocker (losartan to reduce stromal collagen/improve drug delivery), radiotherapy (SBRT or proton beam), and immunotherapy (nivolumab) specifically designed to downstage locally advanced and borderline resectable pancreatic cancer prior to surgical resection in treatment-naive patients.\n\n---\n\n### **Trial 2**\n* **NCT ID:** NCT03825705\n* **Title:** Stereotactic MR-Guided On-Line Adaptive Radiation Therapy (SMART) for the Treatment of Locally Advanced and Borderline Resectable Pancreatic Cancer\n* **Location:** \n  * Brigham and Women's Hospital / Dana-Farber Cancer Institute, Boston, Massachusetts\n* **Relevance:** This prospective multi-center trial assesses the safety, downstaging efficacy, and resection rates of stereotactic MR-guided adaptive radiation therapy (SMART) following standard induction chemotherapy (such as mFOLFIRINOX or Gemcitabine/Nab-Paclitaxel) in chemotherapy-naive patients presenting with borderline resectable or locally advanced pancreatic ductal adenocarcinoma.",
         "extractedNcts": [
           "NCT03563248",
-          "NCT03941093"
+          "NCT03825705"
         ],
         "hallucinationDetails": [
           "HALLUCINATED: NCT03563248 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT03941093 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT03825705 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 20577
+        "executionTimeMs": 14186
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."
@@ -1057,14 +1059,14 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Glioblastoma (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE & Disease Chronology Staging.",
-        "executionTimeMs": 1324
+        "executionTimeMs": 764
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 45,
-        "precision": 78,
-        "safetyViolations": 10,
+        "precision": 80,
+        "safetyViolations": 9,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -1080,8 +1082,7 @@
           "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
           "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
           "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
-          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens."
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed."
         ],
         "sampleViolations": [
           {
@@ -1103,8 +1104,8 @@
             "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed."
           }
         ],
-        "summary": "Returned 45 matches by flat keyword matching; 10 trials (22%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 6
+        "summary": "Returned 45 matches by flat keyword matching; 9 trials (20%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 8
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -1115,20 +1116,20 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Based on this patient's profile (newly diagnosed supratentorial glioblastoma, IDH-wildtype, MGMT methylated, EGFR amplified, status-post resection prior to adjuvant therapy), here are two active clinical trials with study sites in North Carolina evaluating novel radiosensitizers or frontline targeted strategies:\n\n---\n\n### **Trial 1: AZD1390 with Radiation Therapy and Temozolomide (Radiosensitizer Trial)**\n* **NCT ID:** **NCT03770442**\n* **Title:** *A Study to Evaluate the Safety, Tolerability, Pharmacokinetics, and Preliminary Efficacy of AZD1390 in Combination With Radiation Therapy in Patients With Glioblastoma*\n* **Trial Overview:** \n  AZD1390 is a potent, highly brain-penetrant ATM (ataxia telangiectasia mutated) kinase inhibitor. By blocking ATM-dependent DNA damage repair triggered by radiation, it functions as a novel radiosensitizer. This study includes an arm specifically for newly diagnosed GBM patients who have completed surgical resection and are initiating standard radiotherapy plus concurrent adjuvant temozolomide.\n* **Relevance:** Directly addresses the patient's goal of receiving an investigational radiosensitizing agent during initial post-operative chemoradiation.\n* **Location in North Carolina:**\n  * **The Preston Robert Tisch Brain Tumor Center / Duke University Medical Center**, Durham, North Carolina\n\n---\n\n### **Trial 2: GBM AGILE (Adaptive Frontline Platform Trial)**\n* **NCT ID:** **NCT03970447**\n* **Title:** *Global Adaptive Innovative Learning Environment for Glioblastoma (GBM AGILE)*\n* **Trial Overview:** \n  GBM AGILE is a multi-arm, biomarker-driven, adaptive platform trial that rapidly tests multiple experimental therapies compared against standard-of-care (radiotherapy + temozolomide) in newly diagnosed and recurrent glioblastoma. Patients are stratified by MGMT methylation status and genomic alterations (such as EGFR amplification) to receive matched novel targeted therapies or targeted combination regimens.\n* **Relevance:** Allows a newly diagnosed patient access to frontline molecularly guided targeted agents alongside standard radiation and temozolomide.\n* **Locations in North Carolina:**\n  * **Duke Cancer Institute / Duke University Health System**, Durham, North Carolina\n  * **UNC Lineberger Comprehensive Cancer Center**, Chapel Hill, North Carolina",
+        "rawOutput": "Here are two active clinical trials matching this patient's profile (newly diagnosed supratentorial glioblastoma, IDH-wildtype, MGMT methylated, EGFR amplified, prior to adjuvant therapy) located in North Carolina:\n\n---\n\n### **Trial 1: NRG-BN008 (PARP Inhibitor Radiosensitizer)**\n* **NCT ID:** NCT04797468  \n* **Title:** Testing the Addition of the PARP Inhibitor Olaparib to the Usual Radiation and Temozolomide Treatment in Newly Diagnosed Glioblastoma With MGMT Promoter Methylation  \n* **Location in North Carolina:**  \n  * Duke University Medical Center (Durham, NC)  \n  * UNC Lineberger Comprehensive Cancer Center (Chapel Hill, NC)  \n  * Wake Forest Baptist Health / Comprehensive Cancer Center (Winston-Salem, NC)  \n* **Why it Fits:** This phase II/III randomized trial is designed specifically for newly diagnosed, surgically resected glioblastoma patients whose tumors are **MGMT promoter methylated** and who have not yet started radiation or temozolomide. It investigates **olaparib** as a radiosensitizing and chemosensitizing agent combined with standard-of-care temozolomide and radiotherapy.\n\n---\n\n### **Trial 2: INSIGhT (Biomarker-Driven Frontline Targeted Therapy)**\n* **NCT ID:** NCT02977780  \n* **Title:** Individualized Screening Trial of Innovative Glioblastoma Therapy (INSIGhT)  \n* **Location in North Carolina:**  \n  * The Preston Robert Tisch Brain Tumor Center at Duke University (Durham, NC)  \n* **Why it Fits:** INSIGhT is an adaptive, multi-arm platform trial for newly diagnosed, supratentorial glioblastoma patients (IDH-wildtype) who have completed surgery and are candidates for radiotherapy and temozolomide. It specifically utilizes genomic profiling to assign or adaptively randomize patients to investigational targeted therapy arms (such as EGFR-directed or cell-cycle inhibitors) combined with standard radiation therapy. This makes it an ideal fit for an **EGFR-amplified** tumor.",
         "extractedNcts": [
-          "NCT03770442",
-          "NCT03970447"
+          "NCT04797468",
+          "NCT02977780"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT03770442 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT03970447 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04797468 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT02977780 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 14755
+        "executionTimeMs": 15336
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 10 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 9 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -1185,7 +1186,7 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Leukemia (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Demographic Age Brackets and Salvage Staging).",
-        "executionTimeMs": 1323
+        "executionTimeMs": 790
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -1229,7 +1230,7 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Based on the patient's profile (adult relapsed/refractory AML harboring a **FLT3-ITD** mutation following standard 7+3 induction), here are two active clinical trials with study locations in Illinois evaluating targeted approaches:\n\n---\n\n### **Trial 1: Gilteritinib Combined with Venetoclax for FLT3-Mutated Relapsed/Refractory AML**\n* **NCT ID:** NCT03625505  \n* **Title:** A Study of Venetoclax in Combination With Gilteritinib in Patients With Relapsed or Refractory Acute Myeloid Leukemia With a FLT3 Mutation  \n* **Location:** \n  * Northwestern University / Robert H. Lurie Comprehensive Cancer Center, Chicago, Illinois, United States\n  * University of Chicago Comprehensive Cancer Center, Chicago, Illinois, United States\n* **Overview & Rationale:** Gilteritinib is an FDA-approved second-generation FLT3 inhibitor (inhibiting both FLT3-ITD and FLT3-TKD). Combining it with the BCL-2 inhibitor venetoclax produces synergistic anti-leukemic activity and has shown significant clinical efficacy in overcoming resistance pathways in relapsed/refractory FLT3-mutated AML.\n\n---\n\n### **Trial 2: Tuspetinib (HM43239) Monotherapy or in Combination in Relapsed/Refractory AML**\n* **NCT ID:** NCT04240067  \n* **Title:** A Study of HM43239 in Patients With Relapsed or Refractory Acute Myeloid Leukemia (AML)  \n* **Location:** \n  * Northwestern University Feinberg School of Medicine, Chicago, Illinois, United States\n* **Overview & Rationale:** Tuspetinib (HM43239) is a potent, oral myeloid kinase inhibitor that targets SYK and both wild-type and mutant forms of FLT3 (including FLT3-ITD and gatekeeper mutations). It is specifically designed to overcome resistance mechanisms associated with earlier-line FLT3 therapies and standard induction failure in relapsed/refractory AML.",
+        "rawOutput": "Here are 2 active clinical trials matching the patient’s profile of relapsed/refractory FLT3-ITD mutated AML in Illinois:\n\n### **Trial 1**\n* **NCT ID:** NCT03625505\n* **Title:** A Phase 1b Dose Escalation and Expansion Study of Venetoclax in Combination With Gilteritinib in Patients With Relapsed or Refractory Acute Myeloid Leukemia\n* **Location:** \n  * Northwestern University / Robert H. Lurie Comprehensive Cancer Center (Chicago, Illinois)\n  * Rush University Medical Center (Chicago, Illinois)\n* **Summary/Relevance:** Evaluates the safety and efficacy of combining the BCL-2 inhibitor venetoclax with the FLT3 inhibitor gilteritinib specifically in adult patients with relapsed/refractory AML, with designated cohorts for patients harboring *FLT3* mutations (including FLT3-ITD).\n\n---\n\n### **Trial 2**\n* **NCT ID:** NCT04240067\n* **Title:** A Phase 1/2 Study of Tuspetinib (HM43239) in Patients With Relapsed or Refractory Acute Myeloid Leukemia\n* **Location:** \n  * Northwestern Memorial Hospital (Chicago, Illinois)\n  * University of Chicago Medicine (Chicago, Illinois)\n* **Summary/Relevance:** Investigates tuspetinib, a novel oral myeloid kinase inhibitor that targets both FLT3 (including ITD and TKD mutations) and SYK pathways, as monotherapy and in novel combinations for adult patients with relapsed or refractory AML post-intensive induction therapy.",
         "extractedNcts": [
           "NCT03625505",
           "NCT04240067"
@@ -1239,7 +1240,7 @@
           "HALLUCINATED: NCT04240067 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 10031
+        "executionTimeMs": 11343
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 2 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -1288,7 +1289,7 @@
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE & Prior Immunotherapy Exposure Stratification",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Cancer (FGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE & Prior Immunotherapy Exposure Stratification.",
-        "executionTimeMs": 1322
+        "executionTimeMs": 962
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -1347,7 +1348,7 @@
           }
         ],
         "summary": "Returned 92 matches by flat keyword matching; 22 trials (24%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 11
+        "executionTimeMs": 13
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -1358,17 +1359,17 @@
         "hallucinations": 2,
         "auditability": false,
         "model": "gemini-3.8-flash",
-        "rawOutput": "Based on the patient's diagnosis of locally advanced/metastatic urothelial carcinoma harboring an activating *FGFR3* mutation with progression on prior anti-PD-1 immunotherapy (pembrolizumab), here are two active clinical trials offering targeted therapy with study sites in Washington state:\n\n---\n\n### **1. SURF301: Study of TYRA-300 in Advanced Solid Tumors With FGFR3 Gene Alterations**\n* **NCT ID:** NCT05574348\n* **Title:** A Phase 1/2 Study of TYRA-300 in Participants With Advanced Solid Tumors With FGFR3 Gene Alterations (SURF301)\n* **Study Description & Relevance:** \n  TYRA-300 is an investigational, oral, selective FGFR3 inhibitor designed to avoid the class-wide toxicities associated with FGFR1/2/4 inhibition (such as hyperphosphatemia). This trial specifically enrolls patients with advanced or metastatic urothelial carcinoma harboring *FGFR3* gene alterations who have progressed on or after standard-of-care systemic therapy (including prior immune checkpoint inhibitors such as pembrolizumab).\n* **Location in Washington:**\n  * **Fred Hutchinson Cancer Center / University of Washington Medical Center** – Seattle, Washington\n\n---\n\n### **2. Study of LOXO-435 (LY3866288) in Participants With Advanced Solid Tumors With FGFR3 Alterations**\n* **NCT ID:** NCT05619146\n* **Title:** A Phase 1/2 Study of LOXO-435 (LY3866288) in Participants With Advanced Solid Tumors With FGFR3 Alterations\n* **Study Description & Relevance:** \n  LOXO-435 is a highly selective, potent FGFR3 inhibitor. The study evaluates safety, tolerability, and preliminary efficacy in patients with locally advanced or metastatic solid tumors—including urothelial carcinoma—that harbor activating *FGFR3* mutations or fusions and have received prior standard therapy (chemotherapy and/or anti-PD-1/PD-L1 checkpoint inhibitors).\n* **Location in Washington:**\n  * **Fred Hutchinson Cancer Center** – Seattle, Washington",
+        "rawOutput": "Here are two active clinical trials evaluating FGFR-targeted therapies for patients with advanced urothelial carcinoma harboring an *FGFR* alteration and prior checkpoint inhibitor therapy, with trial sites located in Washington state:\n\n---\n\n### **Trial 1: SURF301 Study**\n* **NCT ID:** NCT05727020  \n* **Title:** *A Phase 1/2 Study of TYRA-300 in Advanced Solid Tumors With FGFR3 Gene Alterations (SURF301)*  \n* **Study Drug:** TYRA-300 (an oral, selective FGFR3 inhibitor designed to spare other FGFR isoforms)  \n* **Relevance:** Specifically enrolls patients with advanced or metastatic urothelial carcinoma harboring *FGFR3* gene alterations who have experienced disease progression on or after standard therapies, including anti-PD-(L)1 immunotherapy.  \n* **Location in Washington:**  \n  * **Fred Hutchinson Cancer Center / University of Washington**, Seattle, Washington\n\n---\n\n### **Trial 2: NORSE Study**\n* **NCT ID:** NCT04172675  \n* **Title:** *A Study of Erdafitinib or Erdafitinib Plus Cetrelimab in Subjects With Metastatic or Locally Advanced Urothelial Cancer*  \n* **Study Drug(s):** Erdafitinib (oral pan-FGFR inhibitor) alone or in combination with Cetrelimab (anti-PD-1)  \n* **Relevance:** Evaluates targeted FGFR therapy in participants with locally advanced or metastatic urothelial cancer displaying selected *FGFR* gene alterations (including activating *FGFR3* mutations).  \n* **Location in Washington:**  \n  * **Fred Hutchinson Cancer Center / University of Washington Medical Center**, Seattle, Washington",
         "extractedNcts": [
-          "NCT05574348",
-          "NCT05619146"
+          "NCT05727020",
+          "NCT04172675"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT05574348 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT05619146 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT05727020 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT04172675 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 7838
+        "executionTimeMs": 11214
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."

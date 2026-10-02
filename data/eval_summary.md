@@ -16,10 +16,10 @@ The evaluation compared:
 | Evaluation Metric | Arm 1: Structured Sanity Agent | Arm 2: Naive Keyword Search | Arm 3: Bare LLM (Zero DB) | Clinical Implication |
 | :--- | :---: | :---: | :---: | :--- |
 | **Medical Precision** | **100%** | 60% | 0% | Arm 1 guarantees verified candidacy; Arm 2 and 3 return disqualified cohorts |
-| **Safety Violations** | **0** | 153 | 21 | Naive search fails on negative exclusion clauses; Bare LLM bypasses protocol rules |
-| **Hallucinated NCT IDs** | **0** | 0 | 21 | Bare LLM invents non-existent identifiers or closed trials |
+| **Safety Violations** | **0** | 152 | 22 | Naive search fails on negative exclusion clauses; Bare LLM bypasses protocol rules |
+| **Hallucinated NCT IDs** | **0** | 0 | 22 | Bare LLM invents non-existent identifiers or closed trials |
 | **Auditability Rate** | **100%** | 0% | 0% | Arm 1 provides exact GROQ queries and protocol rule citations |
-| **Avg Returned Trials** | 1.2 | 41.5 | 2.1 | Arm 1 strictly limits results to actionable, recruiting matches |
+| **Avg Returned Trials** | 1.2 | 41.5 | 2.2 | Arm 1 strictly limits results to actionable, recruiting matches |
 
 ---
 
@@ -56,7 +56,7 @@ The evaluation compared:
 - **DISEASE_MISMATCH** on [NCT07841574]: FAILED: Disease mismatch. Matched query term "lung" inside negative exclusion criteria ("History of active lung is excluded").
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT04036682 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05607550 does not exist in verified oncology corpus.
 - HALLUCINATED: NCT03974022 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
@@ -171,8 +171,8 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 - **PHASE_MISMATCH** on [NCT05941520]: FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT05357898 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT05155254 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04511013 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05352672 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 27 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
@@ -193,10 +193,10 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
-| **Returned Trials** | 1 | 13 | 3 |
+| **Returned Trials** | 1 | 13 | 4 |
 | **Clinical Precision** | **100%** | 92% | 0% |
-| **Safety Violations** | **0** | 1 | 3 |
-| **Hallucinations** | **0** | 0 | 3 |
+| **Safety Violations** | **0** | 1 | 4 |
+| **Hallucinations** | **0** | 0 | 4 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
@@ -208,12 +208,13 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 - **INTERVAL_RECURRENCE_MISMATCH** on [NCT06792552]: FAILED: Relapse interval mismatch. Trial restricted to platinum-resistant disease; patient has platinum-sensitive recurrence.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT03462212 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04065269 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT03522246 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03574922 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03462342 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03682289 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03644342 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 3 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 4 invalid NCT IDs.
 
 ---
 
@@ -249,7 +250,7 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 
 **Arm 3 Hallucination Audit**:
 - HALLUCINATED: NCT04644835 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT02693535 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04497116 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -288,7 +289,7 @@ Structured Sanity Agent safely reported 0 valid trials rather than poisoning pat
 
 **Arm 3 Hallucination Audit**:
 - HALLUCINATED: NCT03563248 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT03941093 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03825705 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -310,8 +311,8 @@ Structured Sanity Agent safely reported 0 valid trials rather than poisoning pat
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 2 | 45 | 2 |
-| **Clinical Precision** | **100%** | 78% | 0% |
-| **Safety Violations** | **0** | 10 | 2 |
+| **Clinical Precision** | **100%** | 80% | 0% |
+| **Safety Violations** | **0** | 9 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
@@ -326,11 +327,11 @@ Structured Sanity Agent safely reported 0 valid trials rather than poisoning pat
 - **DISEASE_SETTING_MISMATCH** on [NCT07381829]: FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT03770442 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT03970447 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04797468 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT02977780 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 10 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 9 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
 
 ---
 
@@ -403,8 +404,8 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 - **DISEASE_MISMATCH** on [NCT06223841]: FAILED: Disease mismatch. Matched query term "cancer" inside negative exclusion criteria ("History of active cancer is excluded").
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT05574348 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT05619146 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05727020 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04172675 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -420,7 +421,7 @@ This benchmark demonstrates three critical clinical truths:
    When patients have prior therapies or specific disease stages, flat text search matches the query words inside the exclusion criteria section. In case TC-01, patients who progressed on chemotherapy were recommended trials whose Rule 14 explicitly bans prior chemotherapy. In case TC-07, a KRAS wild-type patient was served mutant-specific protocols because "KRAS" was in the trial title.
 
 2. **Bare LLMs Cannot Be Trusted With Clinical Lives**:
-   Operating without database grounding, state-of-the-art LLMs consistently fabricate NCT identifiers (21 hallucinated trials across 10 cases). In an oncology clinic, sending a terminal patient to search for a non-existent trial wastes irreplaceable weeks.
+   Operating without database grounding, state-of-the-art LLMs consistently fabricate NCT identifiers (22 hallucinated trials across 10 cases). In an oncology clinic, sending a terminal patient to search for a non-existent trial wastes irreplaceable weeks.
 
 3. **Sanity GROQ + Knowledge Base Guarantees Zero Hallucinations**:
    By decoupling structured biomarker/prior-therapy fields from prose protocol guidelines, the Structured Sanity Agent achieved 100% precision and zero safety violations. Every recommendation links directly to an auditable GROQ query string and a published Institutional Review Board protocol rule.

@@ -1,6 +1,7 @@
 import { auditProtocolSafety } from './protocol_auditor';
 import { getLocalTrials } from './sanity';
 import { ClinicalTrial, NaiveKeywordMatch, PatientProfile } from './types';
+import { normalizeCondition } from './agent';
 
 export function runNaiveKeywordSearch(
   profile: PatientProfile,
@@ -9,6 +10,8 @@ export function runNaiveKeywordSearch(
     biomarker: string;
     priorTherapy: string;
     state?: string;
+    stage?: string;
+    phase?: string;
   }
 ): {
   matches: NaiveKeywordMatch[];
@@ -19,9 +22,10 @@ export function runNaiveKeywordSearch(
   const startTime = Date.now();
   const allTrials = getLocalTrials();
 
-  const condTerm = (extractedCriteria.condition || '').toLowerCase().trim();
-  const bioTerm = (extractedCriteria.biomarker || '').toLowerCase().trim();
-  const stateTerm = (extractedCriteria.state || '').toLowerCase().trim();
+  const condNormalized = normalizeCondition(extractedCriteria.condition || profile.condition || '');
+  const condTerm = condNormalized.toLowerCase().trim();
+  const bioTerm = (extractedCriteria.biomarker || profile.biomarker || '').toLowerCase().trim();
+  const stateTerm = (extractedCriteria.state || profile.location || profile.state || '').toLowerCase().trim();
 
   // Terms used by a naive keyword engine
   const searchTerms = [bioTerm, condTerm].filter(Boolean);
@@ -33,7 +37,6 @@ export function runNaiveKeywordSearch(
     const officialTitle = (trial.officialTitle || '').toLowerCase();
     const condition = (trial.primaryCondition || '').toLowerCase();
     const rawCriteria = (trial.eligibility?.rawCriteriaText || '').toLowerCase();
-    const exclusionText = (trial.eligibility?.exclusionSummary || []).join(' ').toLowerCase();
 
     const fullBlob = `${briefTitle} ${officialTitle} ${condition} ${rawCriteria}`;
 
@@ -51,12 +54,12 @@ export function runNaiveKeywordSearch(
 
     // Evaluate clinical safety violations using protocol auditor
     const audit = auditProtocolSafety(trial, {
-      condition: extractedCriteria.condition,
-      biomarker: extractedCriteria.biomarker,
-      priorTherapy: extractedCriteria.priorTherapy,
+      condition: condNormalized,
+      biomarker: extractedCriteria.biomarker || profile.biomarker || '',
+      priorTherapy: extractedCriteria.priorTherapy || profile.priorTherapy || 'Chemotherapy Allowed',
       location: extractedCriteria.state || profile.location || profile.state,
-      phase: profile.phase,
-      stage: profile.stage,
+      phase: profile.phase || extractedCriteria.phase,
+      stage: profile.stage || extractedCriteria.stage,
       age: profile.age,
       patientNarrative: profile.freeText,
     });

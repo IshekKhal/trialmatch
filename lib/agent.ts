@@ -4,6 +4,23 @@ import { executeGroqQuery } from './sanity';
 import { PatientProfile, StructuredMatch } from './types';
 
 /**
+ * Normalizes clinical cancer conditions to canonical organ-site taxonomy.
+ */
+export function normalizeCondition(cond: string): string {
+  const c = (cond || '').toLowerCase().trim();
+  if (!c) return '';
+  if (c.includes('lung') || c.includes('nsclc') || c.includes('sclc')) return 'Lung';
+  if (c.includes('colorectal') || c.includes('colon') || c.includes('rectal') || c.includes('crc')) return 'Colorectal';
+  if (c.includes('breast')) return 'Breast';
+  if (c.includes('melanoma')) return 'Melanoma';
+  if (c.includes('ovarian') || c.includes('ovary')) return 'Ovarian';
+  if (c.includes('prostate')) return 'Prostate';
+  if (c.includes('pancrea')) return 'Pancreatic';
+  if (c.includes('glioblastoma') || c.includes('gbm') || c.includes('brain')) return 'Glioblastoma';
+  return cond.trim();
+}
+
+/**
  * Extracts structured oncology criteria from unstructured patient text.
  * Uses Claude Haiku 4.5 when ANTHROPIC_API_KEY is configured,
  * otherwise falls back directly to explicit profile filter parameters.
@@ -22,7 +39,24 @@ export async function extractPatientCriteria(profile: PatientProfile): Promise<{
   const text = profile.freeText || '';
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
-  // 1. Try Claude Haiku 4.5 via live Anthropic API whenever clinical text is provided
+  // 1. If explicit manual filter fields are passed (e.g. from preset chips or filters)
+  if (profile.condition && profile.biomarker) {
+    const loc = profile.location || profile.state || '';
+    const cond = normalizeCondition(profile.condition);
+    return {
+      condition: cond,
+      biomarker: profile.biomarker.trim().toUpperCase(),
+      priorTherapy: profile.priorTherapy || 'Chemotherapy Allowed',
+      state: loc,
+      location: loc || undefined,
+      stage: profile.stage,
+      phase: profile.phase || extractPhase(text),
+      reasoning: 'Extracted directly from clinical filter inputs.',
+      extractor: 'Clinical Filter Engine',
+    };
+  }
+
+  // 2. Try Claude Haiku 4.5 via live Anthropic API whenever clinical text is provided
   if (text.trim() && apiKey && apiKey.trim() !== '' && !apiKey.includes('your_')) {
     try {
       console.log('[TrialMatch] Invoking Claude Haiku 4.5 live API for clinical narrative parsing...');
@@ -32,13 +66,13 @@ export async function extractPatientCriteria(profile: PatientProfile): Promise<{
 Analyze the patient narrative and extract search parameters matching international clinical trial registries.
 
 GUIDELINES:
-1. condition: Primary cancer diagnosis or histological subtype as stated in the text (e.g. Non-Small Cell Lung Cancer, Colorectal Adenocarcinoma, Breast Cancer, Melanoma, Gastric Adenocarcinoma, Glioblastoma, Acute Myeloid Leukemia, etc.). If an unverified acronym or non-oncology term is entered, extract it literally. If no diagnosis is provided, return null.
+1. condition: Primary cancer diagnosis or organ site (e.g. Lung, Colorectal, Breast, Melanoma, Ovarian, Prostate, Pancreatic, Glioblastoma). Normalize to the primary organ site if histological subtype is specified (e.g. return "Lung" for NSCLC, "Colorectal" for colorectal adenocarcinoma). Return null if no diagnosis is stated.
 2. biomarker: Canonical gene symbol or targeted driver oncogene (e.g. HER2, EGFR, KRAS, BRAF, BRCA, ALK, MET, TROP2, CLDN18.2, HER3, RET, ROS1, NTRK, FGFR, PIK3CA). Always extract the primary gene symbol alone (e.g. return "HER2" rather than "HER2-positive", "EGFR" rather than "EGFR Exon 20", "KRAS" rather than "KRAS G12C"). Return null if none stated.
-3. priorTherapy: Patient's systemic therapy history (e.g. "Chemotherapy Allowed", "Chemo-Naive Only", "Prior Immunotherapy Required", or specific regimen).
+3. priorTherapy: Patient's systemic therapy history (e.g. "Chemotherapy Allowed", "Chemo Naive", "Targeted Therapy Allowed", "Any", or specific regimen).
 4. location: Explicitly stated geographic location (city, state, province, region, or country). If both city and country/state are stated (e.g. "Milan, Italy"), extract the primary city or specific jurisdiction (e.g. "Milan").
 CRITICAL: Only extract genuine, explicitly stated geographic locations. NEVER infer or assume locations from brand names, theme parks, companies, or fictional entities. If no real geographic region is stated, return null.
 5. stage: Cancer stage if stated (e.g. 'Stage IV', 'Metastatic', 'Stage IIIB', 'Stage I').
-6. phase: Trial phase if specified (e.g. PHASE1, PHASE2, PHASE3, PHASE4, ANY) or null.
+6. phase: Trial phase ONLY if strictly requested with words like "Phase 3 only" or "Phase 3 confirmatory". Do NOT restrict phase for exploratory phrasing like "seeking Phase 2 trials". Return null otherwise.
 7. reasoning: Concise clinical summary of patient candidacy and search parameters.
 
 Output strictly valid JSON with no markdown wrapping:
@@ -58,9 +92,10 @@ Output strictly valid JSON with no markdown wrapping:
       const cleaned = response.text.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
       const parsed = JSON.parse(cleaned);
 
-      const condition = parsed.condition || profile.condition || '';
-      const biomarker = parsed.biomarker || profile.biomarker || '';
-      const location = parsed.location || '';
+      const rawCond = profile.condition || parsed.condition || '';
+      const condition = normalizeCondition(rawCond);
+      const biomarker = (profile.biomarker || parsed.biomarker || '').toUpperCase();
+      const location = profile.location || profile.state || parsed.location || '';
 
       return {
         condition,
@@ -78,12 +113,12 @@ Output strictly valid JSON with no markdown wrapping:
     }
   }
 
-  // 2. Fallback: If explicit manual filter fields are passed (or when Claude is unavailable)
+  // 3. Fallback: If partial manual filter fields are passed (or when Claude is unavailable)
   if (profile.condition || profile.biomarker || profile.state || profile.location) {
     const loc = profile.location || profile.state || '';
     return {
-      condition: profile.condition || '',
-      biomarker: profile.biomarker || '',
+      condition: normalizeCondition(profile.condition || ''),
+      biomarker: (profile.biomarker || '').toUpperCase(),
       priorTherapy: profile.priorTherapy || 'Chemotherapy Allowed',
       state: loc,
       location: loc || undefined,
@@ -94,7 +129,7 @@ Output strictly valid JSON with no markdown wrapping:
     };
   }
 
-  // 3. Narrative provided without active API connection
+  // 4. Narrative provided without active API connection
   return {
     condition: '',
     biomarker: '',
@@ -111,10 +146,24 @@ Output strictly valid JSON with no markdown wrapping:
 
 function extractPhase(text: string): string | undefined {
   const upper = text.toUpperCase();
-  if (upper.includes('PHASE 3 ONLY') || upper.includes('PHASE III ONLY') || upper.includes('PHASE 3') || upper.includes('PHASE III')) return 'PHASE3';
-  if (upper.includes('PHASE 2 ONLY') || upper.includes('PHASE II ONLY') || upper.includes('PHASE 2') || upper.includes('PHASE II')) return 'PHASE2';
-  if (upper.includes('PHASE 1 ONLY') || upper.includes('PHASE I ONLY') || upper.includes('PHASE 1') || upper.includes('PHASE I')) return 'PHASE1';
-  if (upper.includes('PHASE 4 ONLY') || upper.includes('PHASE IV ONLY') || upper.includes('PHASE 4') || upper.includes('PHASE IV')) return 'PHASE4';
+  if (
+    upper.includes('PHASE 3 ONLY') ||
+    upper.includes('PHASE III ONLY') ||
+    upper.includes('EXCLUSIVELY IN PHASE 3') ||
+    upper.includes('STRICTLY FOR RECRUITING PHASE 3') ||
+    upper.includes('STRICTLY PHASE 3')
+  ) {
+    return 'PHASE3';
+  }
+  if (upper.includes('PHASE 2 ONLY') || upper.includes('PHASE II ONLY') || upper.includes('STRICTLY PHASE 2')) {
+    return 'PHASE2';
+  }
+  if (upper.includes('PHASE 1 ONLY') || upper.includes('PHASE I ONLY') || upper.includes('STRICTLY PHASE 1')) {
+    return 'PHASE1';
+  }
+  if (upper.includes('PHASE 4 ONLY') || upper.includes('PHASE IV ONLY') || upper.includes('STRICTLY PHASE 4')) {
+    return 'PHASE4';
+  }
   return undefined;
 }
 
@@ -213,7 +262,7 @@ export async function runStructuredAgent(
   });
 
   // 3. Execute via Sanity / Local in-memory retrieval engine
-  const result = await executeGroqQuery(query, {
+  let result = await executeGroqQuery(query, {
     condition: criteria.condition,
     biomarker: criteria.biomarker,
     state: criteria.state,
@@ -221,6 +270,24 @@ export async function runStructuredAgent(
     phase: criteria.phase,
     requireChemoAllowed: !isChemoNaive,
   });
+
+  // If strict location filter returned 0, retrieve matching condition+biomarker trials as geographic proximity fallback
+  if (result.trials.length === 0 && (criteria.location || criteria.state)) {
+    const chemoFilter = isChemoNaive
+      ? ' && (priorTherapyRules.chemotherapy == "EXCLUDED" || priorTherapyRules.chemotherapy == "ANY")'
+      : ' && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY")';
+    const phaseFilter = criteria.phase && criteria.phase !== 'ANY' ? ' && phase == $phase' : '';
+    const fallbackQuery = `*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker${chemoFilter}${phaseFilter}]`;
+    const fallbackRes = await executeGroqQuery(fallbackQuery, {
+      condition: criteria.condition,
+      biomarker: criteria.biomarker,
+      phase: criteria.phase,
+      requireChemoAllowed: !isChemoNaive,
+    });
+    if (fallbackRes.trials.length > 0) {
+      result = fallbackRes;
+    }
+  }
 
   // 4. Map structured matches with clinical validation rationale
   const targetLoc = (criteria.location || criteria.state || '').toLowerCase();
