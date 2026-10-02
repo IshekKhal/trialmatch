@@ -37,12 +37,13 @@ export function PatientInputBar({
     if (e) e.preventDefault();
     if (!freeText.trim() && !condition.trim() && !biomarker.trim()) return;
 
+    // Only include structured filter overrides if the user explicitly opened the override panel
     onSubmit({
       freeText,
-      condition: condition.trim() || undefined,
-      biomarker: biomarker.trim() || undefined,
-      priorTherapy: priorTherapy.trim() || undefined,
-      state: state.trim() || undefined,
+      condition: showFilters && condition.trim() ? condition.trim() : undefined,
+      biomarker: showFilters && biomarker.trim() ? biomarker.trim() : undefined,
+      priorTherapy: showFilters && priorTherapy.trim() ? priorTherapy.trim() : undefined,
+      state: showFilters && state.trim() ? state.trim() : undefined,
     });
   };
 
@@ -83,7 +84,16 @@ export function PatientInputBar({
         className="patient-textarea"
         placeholder="Enter unstructured patient oncological record (e.g., '58yo with Non-Small Cell Lung Cancer, EGFR Exon 20 insertion, prior platinum chemotherapy completed 4 months ago, looking for recruiting trials in Texas')..."
         value={freeText}
-        onChange={(e) => setFreeText(e.target.value)}
+        onChange={(e) => {
+          setFreeText(e.target.value);
+          // If the user is modifying text without the filter panel open, clear old preset overrides
+          if (!showFilters) {
+            setCondition('');
+            setBiomarker('');
+            setPriorTherapy('');
+            setState('');
+          }
+        }}
         onKeyDown={handleKeyDown}
         rows={3}
       />

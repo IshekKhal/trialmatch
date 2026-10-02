@@ -60,7 +60,7 @@ Output strictly valid JSON with no markdown wrapping:
 
       const condition = parsed.condition || profile.condition || '';
       const biomarker = parsed.biomarker || profile.biomarker || '';
-      const location = parsed.location || profile.location || profile.state || '';
+      const location = parsed.location || '';
 
       return {
         condition,
