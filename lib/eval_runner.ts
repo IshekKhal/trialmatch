@@ -1,6 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { BENCHMARK_TEST_CASES, BenchmarkTestCase } from './eval_cases';
+import { auditProtocolSafety } from './protocol_auditor';
 import { executeGroqQuery, getLocalTrials } from './sanity';
 import { ClinicalTrial } from './types';
 
@@ -118,10 +119,12 @@ export async function runArm1Structured(testCase: BenchmarkTestCase): Promise<Ar
     biomarker: f.biomarker,
   };
 
-  let stateFilter = '';
-  if (f.state) {
-    groqParams.state = f.state;
-    stateFilter = ' && locations[].state match $state';
+  const locTerm = (f.state || testCase.location || '').trim();
+  let locFilter = '';
+  if (locTerm) {
+    groqParams.location = locTerm;
+    locFilter =
+      ' && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)';
   }
 
   let phaseFilter = '';
@@ -137,19 +140,20 @@ export async function runArm1Structured(testCase: BenchmarkTestCase): Promise<Ar
     chemoFilter = ' && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY")';
   }
 
-  const groqQuery = `*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker${chemoFilter}${stateFilter}${phaseFilter}]`;
+  const groqQuery = `*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker${chemoFilter}${locFilter}${phaseFilter}]`;
 
   const queryResult = await executeGroqQuery(groqQuery, {
     condition: f.condition,
     biomarker: f.biomarker,
-    state: f.state,
+    state: locTerm,
+    location: locTerm,
     phase: f.phase,
     requireChemoAllowed: f.priorTherapy !== 'Chemo Naive',
   });
 
   let trials = queryResult.trials;
 
-  // If strict state filter returned 0, retrieve condition+biomarker matches and rank by geographic proximity
+  // If strict location filter returned 0, retrieve condition+biomarker matches and rank by geographic proximity
   if (trials.length === 0) {
     const fallbackResult = await executeGroqQuery(
       `*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker${chemoFilter}${phaseFilter}]`,
@@ -165,8 +169,16 @@ export async function runArm1Structured(testCase: BenchmarkTestCase): Promise<Ar
 
   // Cross-reference protocol rules to verify 0 safety exclusions
   const matchedTrials = trials.map((t) => {
-    const loc = t.locations?.find((l) => (l.state || '').toLowerCase().includes((f.state || '').toLowerCase())) || t.locations?.[0];
-    const facility = loc ? `${loc.facility || 'Clinical Center'}, ${loc.city || ''} (${loc.state || ''})` : 'Target Regional Center';
+    const loc =
+      t.locations?.find((l) => {
+        const s = (l.state || '').toLowerCase();
+        const c = (l.city || '').toLowerCase();
+        const co = (l.country || '').toLowerCase();
+        const fac = (l.facility || '').toLowerCase();
+        const term = locTerm.toLowerCase();
+        return s.includes(term) || c.includes(term) || co.includes(term) || fac.includes(term);
+      }) || t.locations?.[0];
+    const facility = loc ? `${loc.facility || 'Clinical Center'}, ${loc.city || ''} (${loc.state || loc.country || ''})` : 'Target Regional Center';
     return {
       nctId: t.nctId,
       briefTitle: t.briefTitle,
@@ -235,98 +247,21 @@ export function runArm2Naive(testCase: BenchmarkTestCase): Arm2Result {
 
     matchedTrials.push(trial);
 
-    // Evaluate Safety Violations on the returned naive match:
-    let isViolation = false;
-    let vType = '';
-    let vMsg = '';
+    // Evaluate Safety Violations on the returned naive match using generic protocol auditor
+    const audit = auditProtocolSafety(trial, {
+      condition: testCase.condition,
+      biomarker: testCase.biomarker,
+      priorTherapy: testCase.priorTherapy,
+      location: testCase.location,
+      phase: testCase.phase,
+      stage: testCase.stage,
+      age: testCase.age,
+      patientNarrative: testCase.patientNarrative,
+    });
 
-    // Check Case-Specific Exclusion Hazards:
-    if (testCase.id === 'TC-01') {
-      // Patient had prior platinum chemo. Trial excludes prior chemo!
-      if (trial.priorTherapyRules?.chemotherapy === 'EXCLUDED' || textBlob.includes('prior chemotherapy is excluded') || textBlob.includes('no prior systemic chemotherapy')) {
-        isViolation = true;
-        vType = 'CHEMO_EXCLUSION';
-        vMsg = 'FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior platinum chemotherapy.';
-      } else if (bioTerm === 'egfr' && !trial.targetBiomarkers?.includes('EGFR') && textBlob.includes('egfr')) {
-        isViolation = true;
-        vType = 'LEXICAL_COLLISION';
-        vMsg = 'FAILED: Lexical collision. Matched renal lab value ("eGFR < 60 mL/min") instead of EGFR genomic alteration.';
-      }
-    } else if (testCase.id === 'TC-02') {
-      // Patient has liver metastases. Trial excludes organ metastases!
-      if (exclusionText.includes('liver') || textBlob.includes('liver metastases are excluded') || textBlob.includes('hepatic impairment')) {
-        isViolation = true;
-        vType = 'ORGAN_METASTASIS_EXCLUSION';
-        vMsg = 'FAILED: Patient banned by hepatic exclusion. Protocol prohibits active liver metastases.';
-      }
-    } else if (testCase.id === 'TC-03') {
-      // Patient is HER2-low. Trial requires classical HER2-positive IHC 3+!
-      if (trial.briefTitle?.toLowerCase().includes('her2-positive') || textBlob.includes('her2 positive') || textBlob.includes('ihc 3+')) {
-        isViolation = true;
-        vType = 'BIOMARKER_EXPRESSION_MISMATCH';
-        vMsg = 'FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).';
-      }
-    } else if (testCase.id === 'TC-04') {
-      // Patient requested Phase 3 only. Trial is Phase 1 or 2!
-      if (trial.phase && trial.phase !== 'PHASE3') {
-        isViolation = true;
-        vType = 'PHASE_MISMATCH';
-        vMsg = `FAILED: Trial phase violation. Returned ${trial.phase} early-phase trial despite strict Phase 3 requirement.`;
-      }
-    } else if (testCase.id === 'TC-05') {
-      // Patient has platinum-sensitive recurrence. Trial is for platinum-refractory!
-      if (textBlob.includes('platinum-resistant') || textBlob.includes('platinum refractory')) {
-        isViolation = true;
-        vType = 'INTERVAL_RECURRENCE_MISMATCH';
-        vMsg = 'FAILED: Relapse interval mismatch. Trial restricted to platinum-resistant disease; patient has platinum-sensitive recurrence.';
-      }
-    } else if (testCase.id === 'TC-06') {
-      // Patient previously took enzalutamide. Trial excludes second-generation anti-androgens!
-      if (exclusionText.includes('enzalutamide') || textBlob.includes('prior enzalutamide') || trial.priorTherapyRules?.targetedTherapy === 'EXCLUDED') {
-        isViolation = true;
-        vType = 'TARGETED_AGENT_EXCLUSION';
-        vMsg = 'FAILED: Patient banned by hormonal exclusion. Trial bars patients previously treated with enzalutamide.';
-      }
-    } else if (testCase.id === 'TC-07') {
-      // Patient is KRAS wild-type. Trial requires activating KRAS mutation!
-      if (trial.targetBiomarkers?.includes('KRAS') || trial.targetBiomarkers?.includes('G12C')) {
-        isViolation = true;
-        vType = 'POLARITY_INVERSION';
-        vMsg = 'FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.';
-      }
-    } else if (testCase.id === 'TC-08') {
-      // Patient is newly diagnosed. Trial is for recurrent/relapsed glioblastoma!
-      if (textBlob.includes('recurrent') || textBlob.includes('relapsed') || textBlob.includes('failed prior radiation')) {
-        isViolation = true;
-        vType = 'DISEASE_SETTING_MISMATCH';
-        vMsg = 'FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.';
-      }
-    } else if (testCase.id === 'TC-09') {
-      // Patient is adult 55yo. Trial is pediatric or geriatric-unfit!
-      const minAge = trial.eligibility?.minimumAgeYears || 0;
-      const maxAge = trial.eligibility?.maximumAgeYears || 100;
-      if (maxAge < 55 || minAge > 55 || textBlob.includes('pediatric')) {
-        isViolation = true;
-        vType = 'DEMOGRAPHIC_AGE_MISMATCH';
-        vMsg = `FAILED: Demographic age mismatch. Protocol restricted to age ${minAge}-${maxAge} years; excludes 55yo adult.`;
-      }
-    } else if (testCase.id === 'TC-10') {
-      // Patient has prior checkpoint inhibitor. Trial excludes prior immunotherapy!
-      if (trial.priorTherapyRules?.immunotherapy === 'EXCLUDED' || textBlob.includes('prior immunotherapy is prohibited')) {
-        isViolation = true;
-        vType = 'IMMUNOTHERAPY_EXCLUSION';
-        vMsg = 'FAILED: Immunotherapy exclusion. Protocol bars patients with prior immune checkpoint inhibitor therapy.';
-      }
-    }
-
-    // Generic prior therapy exclusion check if not already flagged
-    if (!isViolation && trial.priorTherapyRules?.chemotherapy === 'EXCLUDED' && testCase.priorTherapy.toLowerCase().includes('chemo')) {
-      isViolation = true;
-      vType = 'CHEMO_EXCLUSION';
-      vMsg = 'FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior chemotherapy.';
-    }
-
-    if (isViolation) {
+    if (audit.isViolation) {
+      const vMsg = audit.violationMessage || 'Protocol safety violation detected.';
+      const vType = audit.violationType || 'SAFETY_VIOLATION';
       violationDetails.push(vMsg);
       if (sampleViolations.length < 3) {
         sampleViolations.push({

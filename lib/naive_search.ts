@@ -1,3 +1,4 @@
+import { auditProtocolSafety } from './protocol_auditor';
 import { getLocalTrials } from './sanity';
 import { ClinicalTrial, NaiveKeywordMatch, PatientProfile } from './types';
 
@@ -48,74 +49,25 @@ export function runNaiveKeywordSearch(
       continue;
     }
 
-    // Now evaluate clinical safety violations in this naive match:
-    let isSafetyViolation = false;
-    let violationMessage: string | undefined;
-    let violationType: NaiveKeywordMatch['violationType'];
-    let violationRule: string | undefined;
-
-    // 1. Direct Prior Chemotherapy Exclusion Violation
-    const chemoRule = trial.priorTherapyRules?.chemotherapy;
-    if (chemoRule === 'EXCLUDED' || rawCriteria.includes('prior chemotherapy is excluded') || rawCriteria.includes('no prior systemic chemotherapy')) {
-      isSafetyViolation = true;
-      violationType = 'CHEMO_EXCLUSION';
-      violationRule = 'Protocol Exclusion Criterion #14';
-      violationMessage =
-        'CRITICAL SAFETY VIOLATION: Trial matched keyword but explicitly excludes patients with prior chemotherapy in Rule 14. Patient would be disqualified at clinic door.';
-    }
-    // 2. Lexical Collision Hazard (eGFR vs EGFR)
-    else if (
-      bioTerm === 'egfr' &&
-      !trial.targetBiomarkers?.includes('EGFR') &&
-      (rawCriteria.includes('egfr') || briefTitle.includes('egfr') || officialTitle.includes('egfr'))
-    ) {
-      isSafetyViolation = true;
-      violationType = 'LEXICAL_COLLISION';
-      violationRule = 'Laboratory Safety Threshold';
-      violationMessage =
-        'CRITICAL SAFETY VIOLATION: Matched clinical biomarker acronym on renal lab threshold ("eGFR" < 60 mL/min) in non-targeted trial. Patient lacks genuine targeted drug fit.';
-    }
-    // 3. Disease Mismatch via Negative Exclusion Criteria
-    else if (
-      condTerm &&
-      !condition.includes(condTerm) &&
-      !briefTitle.includes(condTerm) &&
-      exclusionText.includes(condTerm)
-    ) {
-      isSafetyViolation = true;
-      violationType = 'DISEASE_MISMATCH';
-      violationRule = 'Prior Malignancy Exclusion';
-      violationMessage = `CRITICAL SAFETY VIOLATION: Disease mismatch. Matched query term "${condTerm}" inside negative exclusion criteria ("History of active ${condTerm} is excluded").`;
-    }
-    // 4. Polarity Inversion (Biomarker Wild-Type required while patient is mutated)
-    else if (
-      bioTerm &&
-      (rawCriteria.includes(`${bioTerm} wild-type`) ||
-        rawCriteria.includes(`${bioTerm} wild type`) ||
-        rawCriteria.includes(`no ${bioTerm} mutation`))
-    ) {
-      isSafetyViolation = true;
-      violationType = 'POLARITY_INVERSION';
-      violationRule = 'Genomic Biomarker Polarity';
-      violationMessage = `CRITICAL SAFETY VIOLATION: Polarity inversion. Trial requires wild-type (absence of ${bioTerm.toUpperCase()} alteration), but matched patient harboring activating mutation.`;
-    }
-    // 5. Geographic Disconnect
-    else if (stateTerm) {
-      const states = (trial.locations || []).map((l) => (l.state || '').toLowerCase());
-      const hasState = states.some((s) => s.includes(stateTerm));
-      if (!hasState && states.length > 0) {
-        // Not a critical safety violation, but a clinical mismatch
-        isSafetyViolation = false;
-      }
-    }
+    // Evaluate clinical safety violations using protocol auditor
+    const audit = auditProtocolSafety(trial, {
+      condition: extractedCriteria.condition,
+      biomarker: extractedCriteria.biomarker,
+      priorTherapy: extractedCriteria.priorTherapy,
+      location: extractedCriteria.state || profile.location || profile.state,
+      phase: profile.phase,
+      stage: profile.stage,
+      age: profile.age,
+      patientNarrative: profile.freeText,
+    });
 
     rawMatches.push({
       trial,
       matchedKeywords: matchedTerms,
-      isSafetyViolation,
-      violationType,
-      violationMessage,
-      violationRule,
+      isSafetyViolation: audit.isViolation,
+      violationType: audit.violationType,
+      violationMessage: audit.violationMessage,
+      violationRule: audit.protocolRule,
     });
   }
 

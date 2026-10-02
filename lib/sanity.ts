@@ -103,18 +103,11 @@ export async function executeGroqQuery(
         .join(' ')
         .toLowerCase();
 
-      // Check disease family synonyms (e.g. NSCLC matches lung)
-      const isLungSynonym =
-        condTerm.includes('lung') &&
-        (fullText.includes('lung') || fullText.includes('nsclc') || fullText.includes('pulmonary'));
-      const isCrcSynonym =
-        condTerm.includes('colorectal') &&
-        (fullText.includes('colorectal') || fullText.includes('colon') || fullText.includes('rectal') || fullText.includes('crc'));
-      const isBreastSynonym =
-        condTerm.includes('breast') && (fullText.includes('breast') || fullText.includes('mammary'));
-
+      const conditionLower = (trial.primaryCondition || '').toLowerCase();
       const conditionMatched =
-        fullText.includes(condTerm) || isLungSynonym || isCrcSynonym || isBreastSynonym;
+        fullText.includes(condTerm) ||
+        conditionLower.includes(condTerm) ||
+        condTerm.split(/\s+/).some((token) => token.length > 3 && (conditionLower.includes(token) || fullText.includes(token)));
 
       if (!conditionMatched) return false;
     }
@@ -134,16 +127,31 @@ export async function executeGroqQuery(
       if (chemoRule === 'EXCLUDED') {
         return false;
       }
+    } else {
+      const chemoRule = trial.priorTherapyRules?.chemotherapy || 'ANY';
+      if (chemoRule === 'REQUIRED') {
+        return false;
+      }
     }
 
-    // 5. Location state match
+    // 5. Dynamic Geographic Location Match (city, state, country, or facility)
     if (stateTerm) {
       const locations = trial.locations || [];
-      const stateMatched = locations.some((loc) => {
+      const locationMatched = locations.some((loc) => {
         const stateStr = (loc.state || '').toLowerCase();
-        return stateStr.includes(stateTerm);
+        const cityStr = (loc.city || '').toLowerCase();
+        const countryStr = (loc.country || '').toLowerCase();
+        const facilityStr = (loc.facility || '').toLowerCase();
+        const tokens = stateTerm.split(/[,/]+/).map((t) => t.trim()).filter(Boolean);
+        return tokens.some(
+          (t) =>
+            stateStr.includes(t) ||
+            cityStr.includes(t) ||
+            countryStr.includes(t) ||
+            facilityStr.includes(t)
+        );
       });
-      if (!stateMatched) return false;
+      if (!locationMatched) return false;
     }
 
     // 6. Phase match if explicitly requested

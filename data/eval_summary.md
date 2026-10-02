@@ -1,6 +1,6 @@
 # TrialMatch: 3-Arm Evaluation Suite & Benchmark Report
 
-_Date: 2026-09-30 | Evaluated on 100 Normalized Precision Oncology Trials_
+_Date: 2026-10-02 | Evaluated on 100 Normalized Precision Oncology Trials_
 
 ## Executive Summary
 
@@ -15,11 +15,11 @@ The evaluation compared:
 
 | Evaluation Metric | Arm 1: Structured Sanity Agent | Arm 2: Naive Keyword Search | Arm 3: Bare LLM (Zero DB) | Clinical Implication |
 | :--- | :---: | :---: | :---: | :--- |
-| **Medical Precision** | **100%** | 78% | 0% | Arm 1 guarantees verified candidacy; Arm 2 and 3 return disqualified cohorts |
-| **Safety Violations** | **0** | 60 | 20 | Naive search fails on negative exclusion clauses; Bare LLM bypasses protocol rules |
-| **Hallucinated NCT IDs** | **0** | 0 | 20 | Bare LLM invents non-existent identifiers or closed trials |
+| **Medical Precision** | **100%** | 60% | 0% | Arm 1 guarantees verified candidacy; Arm 2 and 3 return disqualified cohorts |
+| **Safety Violations** | **0** | 153 | 21 | Naive search fails on negative exclusion clauses; Bare LLM bypasses protocol rules |
+| **Hallucinated NCT IDs** | **0** | 0 | 21 | Bare LLM invents non-existent identifiers or closed trials |
 | **Auditability Rate** | **100%** | 0% | 0% | Arm 1 provides exact GROQ queries and protocol rule citations |
-| **Avg Returned Trials** | 1.2 | 41.5 | 2 | Arm 1 strictly limits results to actionable, recruiting matches |
+| **Avg Returned Trials** | 1.2 | 41.5 | 2.1 | Arm 1 strictly limits results to actionable, recruiting matches |
 
 ---
 
@@ -40,25 +40,27 @@ The evaluation compared:
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 2 | 69 | 2 |
-| **Clinical Precision** | **100%** | 99% | 0% |
-| **Safety Violations** | **0** | 1 | 2 |
+| **Clinical Precision** | **100%** | 55% | 0% |
+| **Safety Violations** | **0** | 31 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **CHEMO_EXCLUSION** on [NCT07799935]: FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior platinum chemotherapy.
+- **DISEASE_MISMATCH** on [NCT05362760]: FAILED: Disease mismatch. Matched query term "lung" inside negative exclusion criteria ("History of active lung is excluded").
+- **DISEASE_MISMATCH** on [NCT07492342]: FAILED: Disease mismatch. Matched query term "lung" inside negative exclusion criteria ("History of active lung is excluded").
+- **DISEASE_MISMATCH** on [NCT07841574]: FAILED: Disease mismatch. Matched query term "lung" inside negative exclusion criteria ("History of active lung is excluded").
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT04847387 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04746654 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04036682 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03974022 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 31 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
 
 ---
 
@@ -84,15 +86,15 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **ORGAN_METASTASIS_EXCLUSION** on [NCT05286814]: FAILED: Patient banned by hepatic exclusion. Protocol prohibits active liver metastases.
+- **ORGAN_METASTASIS_EXCLUSION** on [NCT05286814]: FAILED: Patient disqualified by hepatic exclusion. Protocol prohibits active liver metastases.
 
 **Arm 3 Hallucination Audit**:
 - HALLUCINATED: NCT04793958 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04685141 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05198934 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
@@ -114,27 +116,27 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 3 | 72 | 2 |
-| **Clinical Precision** | **100%** | 89% | 0% |
-| **Safety Violations** | **0** | 8 | 2 |
+| **Clinical Precision** | **100%** | 53% | 0% |
+| **Safety Violations** | **0** | 34 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **BIOMARKER_EXPRESSION_MISMATCH** on [NCT04281641]: FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).
-- **BIOMARKER_EXPRESSION_MISMATCH** on [NCT02945579]: FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).
-- **BIOMARKER_EXPRESSION_MISMATCH** on [NCT06234137]: FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).
+- **DISEASE_MISMATCH** on [NCT06069570]: FAILED: Disease mismatch. Matched query term "breast" inside negative exclusion criteria ("History of active breast is excluded").
+- **BIOMARKER_EXPRESSION_MISMATCH** on [NCT04281641]: FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).
+- **BIOMARKER_EXPRESSION_MISMATCH** on [NCT02945579]: FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT05963595 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT05007558 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT06018337 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04556773 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 8 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 34 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
 
 ---
 
@@ -153,27 +155,27 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 1 | 30 | 2 |
-| **Clinical Precision** | **100%** | 13% | 0% |
-| **Safety Violations** | **0** | 26 | 2 |
+| **Clinical Precision** | **100%** | 10% | 0% |
+| **Safety Violations** | **0** | 27 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state && phase == $phase]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location) && phase == $phase]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **PHASE_MISMATCH** on [NCT05362760]: FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict Phase 3 requirement.
-- **PHASE_MISMATCH** on [NCT06069570]: FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.
-- **PHASE_MISMATCH** on [NCT05941520]: FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.
+- **PHASE_MISMATCH** on [NCT05362760]: FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict PHASE3 requirement.
+- **PHASE_MISMATCH** on [NCT06069570]: FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.
+- **PHASE_MISMATCH** on [NCT05941520]: FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT04746323 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04862413 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05357898 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05155254 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 26 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 27 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
 
 ---
 
@@ -191,26 +193,27 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
-| **Returned Trials** | 1 | 13 | 2 |
+| **Returned Trials** | 1 | 13 | 3 |
 | **Clinical Precision** | **100%** | 92% | 0% |
-| **Safety Violations** | **0** | 1 | 2 |
-| **Hallucinations** | **0** | 0 | 2 |
+| **Safety Violations** | **0** | 1 | 3 |
+| **Hallucinations** | **0** | 0 | 3 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
 - **INTERVAL_RECURRENCE_MISMATCH** on [NCT06792552]: FAILED: Relapse interval mismatch. Trial restricted to platinum-resistant disease; patient has platinum-sensitive recurrence.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT03806049 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT03350130 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03462212 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04065269 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03522246 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 3 invalid NCT IDs.
 
 ---
 
@@ -229,22 +232,24 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 0 | 20 | 2 |
-| **Clinical Precision** | **100%** | 95% | 0% |
-| **Safety Violations** | **0** | 1 | 2 |
+| **Clinical Precision** | **100%** | 40% | 0% |
+| **Safety Violations** | **0** | 12 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **TARGETED_AGENT_EXCLUSION** on [NCT06844383]: FAILED: Patient banned by hormonal exclusion. Trial bars patients previously treated with enzalutamide.
+- **DISEASE_MISMATCH** on [NCT07492342]: FAILED: Disease mismatch. Matched query term "prostate" inside negative exclusion criteria ("History of active prostate is excluded").
+- **TARGETED_AGENT_EXCLUSION** on [NCT06844383]: FAILED: Patient disqualified by hormonal exclusion. Trial bars patients previously treated with enzalutamide.
+- **DISEASE_MISMATCH** on [NCT06816394]: FAILED: Disease mismatch. Matched query term "prostate" inside negative exclusion criteria ("History of active prostate is excluded").
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT03834519 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04037813 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04644835 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT02693535 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -266,24 +271,24 @@ Structured Sanity Agent safely reported 0 valid trials rather than poisoning pat
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 0 | 14 | 2 |
-| **Clinical Precision** | **100%** | 21% | 0% |
-| **Safety Violations** | **0** | 11 | 2 |
+| **Clinical Precision** | **100%** | 7% | 0% |
+| **Safety Violations** | **0** | 13 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "EXCLUDED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "EXCLUDED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **POLARITY_INVERSION** on [NCT07492342]: FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.
-- **POLARITY_INVERSION** on [NCT06069570]: FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.
-- **POLARITY_INVERSION** on [NCT07535112]: FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.
+- **POLARITY_INVERSION** on [NCT07492342]: FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.
+- **POLARITY_INVERSION** on [NCT06069570]: FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.
+- **POLARITY_INVERSION** on [NCT07535112]: FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT04764446 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT04351786 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03563248 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03941093 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -312,17 +317,17 @@ Structured Sanity Agent safely reported 0 valid trials rather than poisoning pat
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **DISEASE_SETTING_MISMATCH** on [NCT07492342]: FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.
-- **DISEASE_SETTING_MISMATCH** on [NCT06816394]: FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.
-- **DISEASE_SETTING_MISMATCH** on [NCT07381829]: FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.
+- **DISEASE_SETTING_MISMATCH** on [NCT07492342]: FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.
+- **DISEASE_SETTING_MISMATCH** on [NCT06816394]: FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.
+- **DISEASE_SETTING_MISMATCH** on [NCT07381829]: FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT98765432 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT12345678 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03770442 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT03970447 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 10 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
@@ -344,25 +349,26 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 1 | 46 | 2 |
-| **Clinical Precision** | **100%** | 100% | 0% |
-| **Safety Violations** | **0** | 0 | 2 |
+| **Clinical Precision** | **100%** | 96% | 0% |
+| **Safety Violations** | **0** | 2 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- Disqualified trials returned due to text matches in negative exclusion sections.
+- **DISEASE_MISMATCH** on [NCT07428044]: FAILED: Disease mismatch. Matched query term "leukemia" inside negative exclusion criteria ("History of active leukemia is excluded").
+- **CHEMO_EXCLUSION** on [NCT07799935]: FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens.
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT03254025 does not exist in verified oncology corpus.
 - HALLUCINATED: NCT03625505 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT04240067 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
-Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 0 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
+Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 2 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs.
 
 ---
 
@@ -381,22 +387,24 @@ Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive 
 | Metric | Arm 1: Structured Sanity | Arm 2: Naive Keyword | Arm 3: Bare LLM |
 | :--- | :---: | :---: | :---: |
 | **Returned Trials** | 0 | 92 | 2 |
-| **Clinical Precision** | **100%** | 99% | 0% |
-| **Safety Violations** | **0** | 1 | 2 |
+| **Clinical Precision** | **100%** | 76% | 0% |
+| **Safety Violations** | **0** | 22 | 2 |
 | **Hallucinations** | **0** | 0 | 2 |
 | **Auditable Query** | **Yes (GROQ)** | No | No |
 
 **Arm 1 Audit Trail (GROQ Query)**:
 ```groq
-*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && locations[].state match $state]
+*[_type == "clinicalTrial" && recruitmentStatus == "RECRUITING" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == "ALLOWED" || priorTherapyRules.chemotherapy == "REQUIRED" || priorTherapyRules.chemotherapy == "ANY") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]
 ```
 
 **Arm 2 Critical Failure Mode**:
-- **IMMUNOTHERAPY_EXCLUSION** on [NCT06026657]: FAILED: Immunotherapy exclusion. Protocol bars patients with prior immune checkpoint inhibitor therapy.
+- **DISEASE_MISMATCH** on [NCT07492342]: FAILED: Disease mismatch. Matched query term "cancer" inside negative exclusion criteria ("History of active cancer is excluded").
+- **DISEASE_MISMATCH** on [NCT06834373]: FAILED: Disease mismatch. Matched query term "cancer" inside negative exclusion criteria ("History of active cancer is excluded").
+- **DISEASE_MISMATCH** on [NCT06223841]: FAILED: Disease mismatch. Matched query term "cancer" inside negative exclusion criteria ("History of active cancer is excluded").
 
 **Arm 3 Hallucination Audit**:
-- HALLUCINATED: NCT04001323 does not exist in verified oncology corpus.
-- HALLUCINATED: NCT05217983 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05574348 does not exist in verified oncology corpus.
+- HALLUCINATED: NCT05619146 does not exist in verified oncology corpus.
 
 **Clinical Verdict**:
 Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives.
@@ -412,7 +420,7 @@ This benchmark demonstrates three critical clinical truths:
    When patients have prior therapies or specific disease stages, flat text search matches the query words inside the exclusion criteria section. In case TC-01, patients who progressed on chemotherapy were recommended trials whose Rule 14 explicitly bans prior chemotherapy. In case TC-07, a KRAS wild-type patient was served mutant-specific protocols because "KRAS" was in the trial title.
 
 2. **Bare LLMs Cannot Be Trusted With Clinical Lives**:
-   Operating without database grounding, state-of-the-art LLMs consistently fabricate NCT identifiers (20 hallucinated trials across 10 cases). In an oncology clinic, sending a terminal patient to search for a non-existent trial wastes irreplaceable weeks.
+   Operating without database grounding, state-of-the-art LLMs consistently fabricate NCT identifiers (21 hallucinated trials across 10 cases). In an oncology clinic, sending a terminal patient to search for a non-existent trial wastes irreplaceable weeks.
 
 3. **Sanity GROQ + Knowledge Base Guarantees Zero Hallucinations**:
    By decoupling structured biomarker/prior-therapy fields from prose protocol guidelines, the Structured Sanity Agent achieved 100% precision and zero safety violations. Every recommendation links directly to an auditable GROQ query string and a published Institutional Review Board protocol rule.

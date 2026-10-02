@@ -59,7 +59,10 @@ export interface PatientProfile {
   biomarker?: string;
   priorTherapy?: string;
   state?: string;
+  location?: string;
   phase?: string;
+  stage?: string;
+  age?: number;
 }
 
 export interface ClinicalScenario {
@@ -72,6 +75,7 @@ export interface ClinicalScenario {
     biomarker: string;
     priorTherapy: string;
     state: string;
+    location?: string;
     phase?: string;
   };
 }
@@ -89,7 +93,7 @@ export interface NaiveKeywordMatch {
   trial: ClinicalTrial;
   matchedKeywords: string[];
   isSafetyViolation: boolean;
-  violationType?: 'CHEMO_EXCLUSION' | 'LEXICAL_COLLISION' | 'POLARITY_INVERSION' | 'DISEASE_MISMATCH';
+  violationType?: string;
   violationMessage?: string;
   violationRule?: string;
 }

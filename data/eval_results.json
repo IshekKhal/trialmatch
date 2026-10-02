@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-30T14:06:22.198Z",
+  "timestamp": "2026-10-02T10:58:38.782Z",
   "corpusSize": 100,
   "testCaseCount": 10,
   "arm1Stats": {
@@ -12,8 +12,8 @@
   },
   "arm2Stats": {
     "name": "Naive Flat Keyword Search",
-    "avgPrecision": 78,
-    "totalSafetyViolations": 60,
+    "avgPrecision": 60,
+    "totalSafetyViolations": 153,
     "totalHallucinations": 0,
     "auditabilityRate": 0,
     "avgReturned": 41.5
@@ -21,10 +21,10 @@
   "arm3Stats": {
     "name": "Bare LLM (Zero Database Access)",
     "avgPrecision": 0,
-    "totalSafetyViolations": 20,
-    "totalHallucinations": 20,
+    "totalSafetyViolations": 21,
+    "totalHallucinations": 21,
     "auditabilityRate": 0,
-    "avgReturned": 2
+    "avgReturned": 2.1
   },
   "results": [
     {
@@ -62,11 +62,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Lung",
           "biomarker": "EGFR",
-          "state": "Texas"
+          "location": "Texas"
         },
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE (Absolute Exclusion Criteria Precedence)",
         "matchedTrials": [
@@ -108,14 +108,14 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Lung (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Absolute Exclusion Criteria Precedence).",
-        "executionTimeMs": 363
+        "executionTimeMs": 857
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 69,
-        "precision": 99,
-        "safetyViolations": 1,
+        "precision": 55,
+        "safetyViolations": 31,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -123,18 +123,60 @@
           "lung"
         ],
         "violationDetails": [
-          "FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior platinum chemotherapy."
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens.",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\")."
         ],
         "sampleViolations": [
           {
-            "nctId": "NCT07799935",
-            "briefTitle": "IRE After Chemotherapy for Locally Advanced Pancreatic Cancer",
-            "violationType": "CHEMO_EXCLUSION",
-            "violationMessage": "FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior platinum chemotherapy."
+            "nctId": "NCT05362760",
+            "briefTitle": "Combination of Abemaciclib and Endocrine Therapy in Hormone Receptor Positive HER2 Negative Locally Advanced or Metastatic Breast Cancer With Focus on Digital Side Effect Management",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\")."
+          },
+          {
+            "nctId": "NCT07492342",
+            "briefTitle": "Fulzerasib Sequential Sintilimab Plus Platinum-Doublet Neoadjuvant Therapy for Resectable KRAS G12C-Mutant NSCLC",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\")."
+          },
+          {
+            "nctId": "NCT07841574",
+            "briefTitle": "HAIC Plus QL1706 & Bevacizumab in Unresectable HER2-Negative ICC",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"lung\" inside negative exclusion criteria (\"History of active lung is excluded\")."
           }
         ],
-        "summary": "Returned 69 matches by flat keyword matching; 1 trials (1%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 5
+        "summary": "Returned 69 matches by flat keyword matching; 31 trials (45%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 12
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -144,21 +186,21 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Based on the patient's profile: 58-year-old female with metastatic Non-Small Cell Lung Cancer (NSCLC) harboring an EGFR Exon 20 insertion mutation, progressive disease after platinum doublet chemotherapy, ECOG PS 1, and seeking active recruiting Phase 2 targeted clinical trials in Texas, here are two recommendations:\n\n---\n\n**1. NCT ID: NCT04596395**\n*   **Title:** A Study of Amivantamab and Lazertinib in Participants With Advanced EGFR-Mutated Non-Small Cell Lung Cancer (CHRYSALIS-2)\n*   **Brief Description:** This is a Phase 1/2 study evaluating the combination of amivantamab (a bispecific antibody targeting EGFR and MET) and lazertinib (a third-generation EGFR TKI) in patients with advanced EGFR-mutated NSCLC. One of the cohorts specifically enrolls patients with EGFR Exon 20 insertion mutations who have progressed on or after platinum-based chemotherapy, matching the patient's criteria for prior therapy and biomarker.\n*   **Locations in Texas:**\n    *   Baylor Charles A. Sammons Cancer Center, Dallas, TX\n    *   MD Anderson Cancer Center, Houston, TX\n    *   Texas Oncology-Austin Midtown, Austin, TX\n    *   Texas Oncology-Baylor Charles A. Sammons Cancer Center, Dallas, TX\n    *   Texas Oncology-Fort Worth, Fort Worth, TX\n    *   Texas Oncology-Longview Cancer Center, Longview, TX\n    *   Texas Oncology-McAllen, McAllen, TX\n    *   Texas Oncology-San Antonio Medical Center, San Antonio, TX\n    *   Texas Oncology-The Woodlands, The Woodlands, TX\n    *   Texas Oncology-Tyler, Tyler, TX\n\n---\n\n**2. NCT ID: NCT04847926**\n*   **Title:** A Study of SUN105 in Participants With Advanced Non-Small Cell Lung Cancer With EGFR Exon 20 Insertion Mutations\n*   **Brief Description:** This is a Phase 1/2 study investigating SUN105, an investigational oral EGFR tyrosine kinase inhibitor specifically designed to target EGFR Exon 20 insertion mutations. The study includes patients with advanced NSCLC who have this mutation and have received prior platinum-based chemotherapy or other systemic therapy.\n*   **Locations in Texas:**\n    *   Baylor Charles A. Sammons Cancer Center, Dallas, TX\n    *   MD Anderson Cancer Center, Houston, TX\n    *   Texas Oncology-Baylor Charles A. Sammons Cancer Center, Dallas, TX\n\n---\n\n**Important Note:** Clinical trial eligibility can be complex and depends on many factors beyond those listed in a brief profile. Interested patients should always discuss these options with their oncologist, who can determine precise eligibility and suitability.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Based on the patient's diagnosis of Stage IV metastatic NSCLC with an EGFR Exon 20 insertion mutation and prior progression on platinum-based chemotherapy, here are two relevant targeted therapy clinical trials with active sites in Texas:\n\n### Trial 1\n* **NCT ID:** NCT04036682\n* **Title:** Phase 1/2a Study of CLN-081 in Patients With Non-Small Cell Lung Cancer (NSCLC) Harboring EGFR Exon 20 Insertion Mutations\n* **Agent:** Zipalertinib (CLN-081)\n* **Trial Phase:** Phase 1 / Phase 2\n* **Locations in Texas:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center\n  * **San Antonio, Texas:** NEXT Oncology\n\n---\n\n### Trial 2\n* **NCT ID:** NCT03974022\n* **Title:** A Phase I/II Study of DZD9008 in Patients With Advanced Non-Small Cell Lung Cancer Harboring EGFR or HER2 Mutation (WU-KONG1)\n* **Agent:** Sunvozertinib (DZD9008)\n* **Trial Phase:** Phase 1 / Phase 2\n* **Location in Texas:**\n  * **Houston, Texas:** The University of Texas MD Anderson Cancer Center",
         "extractedNcts": [
-          "NCT04596395",
-          "NCT04847926"
+          "NCT04036682",
+          "NCT03974022"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04596395 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT04847926 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04036682 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03974022 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 17242
+        "executionTimeMs": 6649
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 31 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -195,11 +237,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Colorectal",
           "biomarker": "KRAS",
-          "state": "California"
+          "location": "California"
         },
         "protocolRuleCited": "RULE-BIOMARKER-SPECIFICITY & Organ Site Metastatic Protocol Hierarchy",
         "matchedTrials": [
@@ -229,7 +271,7 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Colorectal (KRAS) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY & Organ Site Metastatic Protocol Hierarchy.",
-        "executionTimeMs": 392
+        "executionTimeMs": 866
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -244,14 +286,14 @@
           "colorectal"
         ],
         "violationDetails": [
-          "FAILED: Patient banned by hepatic exclusion. Protocol prohibits active liver metastases."
+          "FAILED: Patient disqualified by hepatic exclusion. Protocol prohibits active liver metastases."
         ],
         "sampleViolations": [
           {
             "nctId": "NCT05286814",
             "briefTitle": "PDS01ADC in Combination With Hepatic Artery Infusion Pump (HAIP) and Systemic Therapy for Subjects With Metastatic Colorectal Cancer, Intrahepatic Cholangiocarcinoma, or Metastatic Adrenocortical Carcinoma",
             "violationType": "ORGAN_METASTASIS_EXCLUSION",
-            "violationMessage": "FAILED: Patient banned by hepatic exclusion. Protocol prohibits active liver metastases."
+            "violationMessage": "FAILED: Patient disqualified by hepatic exclusion. Protocol prohibits active liver metastases."
           }
         ],
         "summary": "Returned 14 matches by flat keyword matching; 1 trials (7%) contain critical safety violations that would disqualify the patient.",
@@ -265,18 +307,18 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Here are two active clinical trials that may be suitable for the patient, focusing on KRAS G12C inhibition for metastatic colorectal cancer in California. Please note that clinical trial status and specific site availability can change, so it is crucial to verify this information with a healthcare professional and through current clinical trial databases.\n\n---\n\n**Trial 1: CodeBreaK 101 (Sotorasib Combination Study)**\n\n*   **NCT ID:** NCT04185971\n*   **Title:** A Phase 1b/2, Open-Label, Multicenter Study Exploring the Safety, Tolerability, Pharmacokinetics, and Anti-tumor Activity of AMG 510 in Combination With Other Anticancer Therapies in Adult Subjects With Advanced KRAS G12C-Mutated Solid Tumors\n*   **Rationale:** This study investigates sotorasib (AMG 510), a KRAS G12C inhibitor, in various combinations with other anticancer therapies. Given the patient's KRAS G12C mutation and prior FOLFOX, specific cohorts within this trial, particularly those focused on colorectal cancer, could be relevant.\n*   **Representative Locations in California:**\n    *   UCLA Medical Center, Los Angeles, CA\n    *   UCSF Helen Diller Family Comprehensive Cancer Center, San Francisco, CA\n    *   City of Hope, Duarte, CA\n    *   Stanford University Medical Center, Stanford, CA\n    *   Moores Cancer Center at UC San Diego Health, La Jolla, CA\n\n---\n\n**Trial 2: KRYSTAL-1 (Adagrasib Study)**\n\n*   **NCT ID:** NCT03785249\n*   **Title:** A Phase 1/2 Study of MRTX849 in Patients With KRAS G12C-Mutant Solid Tumors\n*   **Rationale:** KRYSTAL-1 is a comprehensive study evaluating adagrasib (MRTX849), another targeted KRAS G12C inhibitor, both as a single agent and in combination regimens across various KRAS G12C-mutated solid tumors, including metastatic colorectal cancer. This trial likely has arms suitable for patients with prior systemic therapy like FOLFOX.\n*   **Representative Locations in California:**\n    *   City of Hope National Medical Center, Duarte, CA\n    *   University of California, San Francisco (UCSF), San Francisco, CA\n    *   UCLA Jonsson Comprehensive Cancer Center, Los Angeles, CA\n    *   Stanford Cancer Institute, Stanford, CA\n    *   UC San Diego Health Moores Cancer Center, La Jolla, CA\n\n---\n\n**Important Note:** The information provided is based on my knowledge up to my last update (late 2023). To confirm if these trials are actively recruiting for the specific patient's profile and to find the most up-to-date site information, it is highly recommended to consult clinical trial databases such as ClinicalTrials.gov (using the NCT IDs) or to speak with an oncologist who specializes in colorectal cancer.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Based on the patient's clinical profile (Stage IV colorectal adenocarcinoma with a KRAS G12C mutation, post-frontline FOLFOX, located in California), here are two active clinical trials evaluating targeted KRAS G12C therapy combinations:\n\n---\n\n### **Trial 1: KRYSTAL-10**\n* **NCT ID:** NCT04793958\n* **Title:** *Phase 3 Study of MRTX849 in Combination With Cetuximab Versus Chemotherapy in Patients With Advanced Colorectal Cancer With KRAS G12C Mutation (KRYSTAL-10)*\n* **Key Focus:** Evaluates the selective KRAS G12C inhibitor adagrasib (MRTX849) in combination with the EGFR inhibitor cetuximab versus standard second-line chemotherapy in patients with KRAS G12C-mutated metastatic colorectal cancer who have experienced disease progression following a fluoropyrimidine- and oxaliplatin-based regimen (such as FOLFOX).\n* **California Locations:**\n  * **City of Hope Comprehensive Cancer Center** – Duarte, California\n  * **UCLA Medical Center / Jonsson Comprehensive Cancer Center** – Los Angeles, California\n  * **UC San Diego Moores Cancer Center** – La Jolla, California\n  * **UC Davis Comprehensive Cancer Center** – Sacramento, California\n\n---\n\n### **Trial 2: CodeBreaK 300**\n* **NCT ID:** NCT05198934\n* **Title:** *A Phase 3 Study to Evaluate the Efficacy and Safety of Sotorasib Administered With Panitumumab Versus Investigator's Choice in Participants With Previously Treated Metastatic Colorectal Cancer With KRAS G12C Mutation (CodeBreaK 300)*\n* **Key Focus:** Evaluates sotorasib (AMG 510) administered at two dose levels in combination with the anti-EGFR antibody panitumumab versus standard investigator's choice (trifluridine/tipiracil or regorafenib) in patients with KRAS G12C-mutant mCRC previously treated with frontline chemotherapy.\n* **California Locations:**\n  * **Stanford Cancer Institute** – Stanford, California\n  * **City of Hope Comprehensive Cancer Center** – Duarte, California\n  * **UC Irvine Health / Chao Family Comprehensive Cancer Center** – Orange, California\n  * **UCLA Medical Center** – Los Angeles, California",
         "extractedNcts": [
-          "NCT04185971",
-          "NCT03785249"
+          "NCT04793958",
+          "NCT05198934"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04185971 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT03785249 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04793958 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT05198934 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 13294
+        "executionTimeMs": 5973
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -316,11 +358,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Breast",
           "biomarker": "HER2",
-          "state": "Florida"
+          "location": "Florida"
         },
         "protocolRuleCited": "RULE-BIOMARKER-SPECIFICITY (Quantitative Biomarker Expression Cutoffs)",
         "matchedTrials": [
@@ -357,14 +399,14 @@
           }
         ],
         "summary": "Found 3 protocol-compliant trials matching Breast (HER2) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY (Quantitative Biomarker Expression Cutoffs).",
-        "executionTimeMs": 353
+        "executionTimeMs": 831
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 72,
-        "precision": 89,
-        "safetyViolations": 8,
+        "precision": 53,
+        "safetyViolations": 34,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -372,37 +414,63 @@
           "breast"
         ],
         "violationDetails": [
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+).",
-          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+)."
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+).",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\")."
         ],
         "sampleViolations": [
+          {
+            "nctId": "NCT06069570",
+            "briefTitle": "Safety Study for a Gamma Delta T Cell Product Used With Low Dose Radiotherapy in Patients With Locally Advanced or Metastatic NSCLC or Solid Tumors With Bone Metastases",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"breast\" inside negative exclusion criteria (\"History of active breast is excluded\")."
+          },
           {
             "nctId": "NCT04281641",
             "briefTitle": "Markers to Evaluate the Efficacy of PH-based Regimen as a Neoadjuvant Therapy for Operable HER2 Positive Breast Cancer",
             "violationType": "BIOMARKER_EXPRESSION_MISMATCH",
-            "violationMessage": "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+)."
+            "violationMessage": "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+)."
           },
           {
             "nctId": "NCT02945579",
             "briefTitle": "Multicenter Trial for Eliminating Breast Cancer Surgery or Radiotherapy in Exceptional Responders to Neoadjuvant Systemic Therapy",
             "violationType": "BIOMARKER_EXPRESSION_MISMATCH",
-            "violationMessage": "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+)."
-          },
-          {
-            "nctId": "NCT06234137",
-            "briefTitle": "A Prospective, Open, Multicenter Single-arm Clinical Studie of Docetaxel, Carboplatin Combined With Inetetamab and Pyrotinib in the Treatment of Local-advanced HER2-positive Breast Cancer",
-            "violationType": "BIOMARKER_EXPRESSION_MISMATCH",
-            "violationMessage": "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), patient is HER2-low (IHC 1+/2+)."
+            "violationMessage": "FAILED: Quantitative expression mismatch. Protocol requires HER2-positive (IHC 3+), but patient is HER2-low (IHC 1+/2+)."
           }
         ],
-        "summary": "Returned 72 matches by flat keyword matching; 8 trials (11%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "summary": "Returned 72 matches by flat keyword matching; 34 trials (47%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 9
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -412,21 +480,21 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Based on the patient's profile (51-year-old female with metastatic HER2-low invasive ductal carcinoma, prior trastuzumab in early-stage setting, seeking next-generation ADCs in Florida), here are two active clinical trials that align with these criteria. Please note that availability can change, and exact eligibility should always be confirmed with the trial sites.\n\n---\n\n### Recommended Clinical Trials:\n\n**1. Trial Investigating Datopotamab Deruxtecan (Dato-DXd)**\n\n*   **NCT ID:** NCT04556770\n*   **Title:** A Study of Datopotamab Deruxtecan (Dato-DXd) in Combination With Durvalumab in Patients With Metastatic Triple-Negative Breast Cancer and/or Hormonal Receptor-Positive, HER2-Low Breast Cancer\n*   **Rationale for Patient:** This trial investigates Datopotamab Deruxtecan (Dato-DXd), a novel TROP2-directed Antibody-Drug Conjugate (ADC), which is considered a next-generation ADC. The trial explicitly includes a cohort for patients with **Hormone Receptor-Positive (HR+), HER2-low metastatic breast cancer**. The patient's HER2-low status and metastatic disease align with the inclusion criteria. Prior exposure to trastuzumab in the early-stage setting is generally permissible as the trial targets HER2-low disease in the metastatic setting.\n*   **Location:** Multiple sites in Florida are actively recruiting for this study. Examples typically include major academic cancer centers and large community oncology practices.\n\n**2. Trial Investigating Sacituzumab Govitecan (Trodelvy)**\n\n*   **NCT ID:** NCT05436214\n*   **Title:** A Study of Sacituzumab Govitecan for Patients With Hormone Receptor-Positive/HER2-Low Metastatic Breast Cancer Who Have Progressed on Prior Endocrine Therapy and/or Chemotherapy (OPTIMA)\n*   **Rationale for Patient:** This study specifically targets patients with **Hormone Receptor-Positive (HR+)/HER2-low metastatic breast cancer** (defined as IHC 1+ or IHC 2+/FISH negative) who have progressed on prior lines of therapy, including endocrine therapy and/or chemotherapy. Sacituzumab Govitecan (Trodelvy) is a TROP2-directed ADC that is approved for certain breast cancer subtypes and is being evaluated in this specific HER2-low setting, fitting the \"next-generation ADC\" requirement. The patient's history of prior anti-HER2 therapy in the early-stage setting and current metastatic disease with progression on prior therapies makes her a strong candidate for this trial.\n*   **Location:** Multiple sites in Florida are actively recruiting for this study. Examples typically include major academic cancer centers and large community oncology practices.\n\n---\n\n**Important Note:** To determine precise eligibility and inquire about specific recruiting sites in Florida, the patient's oncology team should contact the trial coordinators directly using the provided NCT IDs. Clinical trial criteria can be very specific regarding prior treatments, disease progression, and overall health status.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Here are two clinical trials evaluating antibody-drug conjugates (ADCs) for metastatic HER2-low breast cancer with active study locations in Florida:\n\n---\n\n### **Trial 1: DYNASTY-Breast02**\n* **NCT ID:** NCT06018337  \n* **Title:** A Phase 3, Open-label, Randomized Study of DB-1303/BNT323 Versus Investigator's Choice Chemotherapy in Patients With Hormone Receptor-Positive, HER2-Low Metastatic Breast Cancer Whose Disease Has Progressed on Endocrine Therapy  \n* **Agent Evaluated:** DB-1303/BNT323 (a novel, third-generation HER2-directed antibody-drug conjugate utilizing a topoisomerase I inhibitor payload)  \n* **Florida Location(s):**  \n  * Moffitt Cancer Center – Tampa, Florida  \n  * Mayo Clinic – Jacksonville, Florida  \n\n---\n\n### **Trial 2: DESTINY-Breast08**\n* **NCT ID:** NCT04556773  \n* **Title:** A Phase 1b/2 Study of Trastuzumab Deruxtecan (T-DXd) in Combination With Other Anticancer Agents in Patients With HER2-Low Metastatic Breast Cancer  \n* **Agent Evaluated:** Trastuzumab Deruxtecan (T-DXd) in combination with endocrine therapies and targeted agents  \n* **Florida Location(s):**  \n  * Sylvester Comprehensive Cancer Center, University of Miami – Miami, Florida  \n  * Moffitt Cancer Center – Tampa, Florida",
         "extractedNcts": [
-          "NCT04556770",
-          "NCT05436214"
+          "NCT06018337",
+          "NCT04556773"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04556770 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT05436214 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT06018337 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT04556773 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 23855
+        "executionTimeMs": 9679
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 8 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 34 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -465,11 +533,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state && phase == $phase]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location) && phase == $phase]",
         "groqParams": {
           "condition": "Melanoma",
           "biomarker": "BRAF",
-          "state": "New York",
+          "location": "New York",
           "phase": "PHASE3"
         },
         "protocolRuleCited": "RULE-PHASE-APPROPRIATENESS (Phase Rigor and Line-of-Therapy Safety)",
@@ -486,14 +554,14 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Melanoma (BRAF) with 0 safety exclusions. Verified against RULE-PHASE-APPROPRIATENESS (Phase Rigor and Line-of-Therapy Safety).",
-        "executionTimeMs": 341
+        "executionTimeMs": 868
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 30,
-        "precision": 13,
-        "safetyViolations": 26,
+        "precision": 10,
+        "safetyViolations": 27,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -501,55 +569,56 @@
           "melanoma"
         ],
         "violationDetails": [
-          "FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement.",
-          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement."
+          "FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Disease mismatch. Matched query term \"melanoma\" inside negative exclusion criteria (\"History of active melanoma is excluded\").",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned NA early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement.",
+          "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement."
         ],
         "sampleViolations": [
           {
             "nctId": "NCT05362760",
             "briefTitle": "Combination of Abemaciclib and Endocrine Therapy in Hormone Receptor Positive HER2 Negative Locally Advanced or Metastatic Breast Cancer With Focus on Digital Side Effect Management",
             "violationType": "PHASE_MISMATCH",
-            "violationMessage": "FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict Phase 3 requirement."
+            "violationMessage": "FAILED: Trial phase violation. Returned PHASE4 early-phase trial despite strict PHASE3 requirement."
           },
           {
             "nctId": "NCT06069570",
             "briefTitle": "Safety Study for a Gamma Delta T Cell Product Used With Low Dose Radiotherapy in Patients With Locally Advanced or Metastatic NSCLC or Solid Tumors With Bone Metastases",
             "violationType": "PHASE_MISMATCH",
-            "violationMessage": "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict Phase 3 requirement."
+            "violationMessage": "FAILED: Trial phase violation. Returned PHASE1 early-phase trial despite strict PHASE3 requirement."
           },
           {
             "nctId": "NCT05941520",
             "briefTitle": "Acolbifene Versus Low Dose Tamoxifen for the Prevention of Breast Cancer in Premenopausal Women at High Risk for Development of Breast Cancer",
             "violationType": "PHASE_MISMATCH",
-            "violationMessage": "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict Phase 3 requirement."
+            "violationMessage": "FAILED: Trial phase violation. Returned PHASE2 early-phase trial despite strict PHASE3 requirement."
           }
         ],
-        "summary": "Returned 30 matches by flat keyword matching; 26 trials (87%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 4
+        "summary": "Returned 30 matches by flat keyword matching; 27 trials (90%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 5
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -559,21 +628,21 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "I do not have access to real-time, live clinical trial databases or the internet to check the most current enrollment status and active locations. My recommendations are based on prominent Phase 3 randomized trials that align with your patient's profile and were active within my knowledge cutoff. It is highly probable that major academic centers in New York (e.g., Memorial Sloan Kettering Cancer Center, NYU Langone Health, NewYork-Presbyterian/Weill Cornell Medical Center) would have participated in these types of pivotal studies.\n\n**Important Note:** The current enrollment status and specific active locations in New York for these trials would need to be verified using a live clinical trials database (like ClinicalTrials.gov) or by consulting directly with an oncologist or research coordinator at a New York-based melanoma center. Many Phase 3 trials, especially for first-line treatment, may have completed enrollment but are still \"active\" for follow-up.\n\nHere are two highly relevant Phase 3 confirmatory randomized trials that fit your patient's criteria:\n\n---\n\n**1. A Study of Spartalizumab in Combination With Dabrafenib and Trametinib in Patients With Unresectable or Metastatic BRAF V600-Mutant Melanoma (COMBI-i)**\n\n*   **NCT ID:** NCT04547903\n*   **Title:** A Phase III, Randomized, Double-Blind, Placebo-Controlled Study to Evaluate the Efficacy and Safety of Spartalizumab in Combination With Dabrafenib and Trametinib in Patients With Unresectable or Metastatic BRAF V600-Mutant Melanoma (COMBI-i)\n*   **Rationale:** This trial investigates a triplet therapy combining a PD-1 inhibitor (spartalizumab) with standard BRAF/MEK inhibitors (dabrafenib and trametinib) against the BRAF/MEK inhibitors alone. This directly addresses the patient's BRAF V600E mutation and the desire for advanced, randomized Phase 3 treatment options for unresectable disease.\n*   **Location (Likely Participants):** Given its global Phase 3 nature, this trial would have had sites at leading cancer centers in New York, such as Memorial Sloan Kettering Cancer Center, NYU Langone Health, and NewYork-Presbyterian/Weill Cornell Medical Center.\n*   **Current Enrollment Status:** While recruitment for this trial may have completed, it represents a crucial Phase 3 design for this patient population. Verification of current enrollment status for new patients is essential.\n\n---\n\n**2. A Randomized Study of Nivolumab and Ipilimumab Followed by Dabrafenib and Trametinib Versus Dabrafenib and Trametinib Followed by Nivolumab and Ipilimumab in Patients With Untreated BRAF V600 Mutant Unresectable or Metastatic Melanoma (DREAMseq)**\n\n*   **NCT ID:** NCT02224781\n*   **Title:** A Phase III Randomized Study of Nivolumab and Ipilimumab Followed by Dabrafenib and Trametinib Versus Dabrafenib and Trametinib Followed by Nivolumab and Ipilimumab in Patients With Untreated BRAF V600 Mutant Unresectable or Metastatic Melanoma (DREAMseq)\n*   **Rationale:** This trial, conducted by the ECOG-ACRIN Cancer Research Group, directly addresses the critical question of optimal sequencing for immunotherapy and targeted therapy in patients with untreated BRAF V600-mutant unresectable or metastatic melanoma. It is a Phase 3 randomized study highly relevant to optimizing outcomes for this patient profile.\n*   **Location (Likely Participants):** As a major cooperative group trial, DREAMseq had numerous sites across the U.S., including many prominent academic and community cancer centers in New York state.\n*   **Current Enrollment Status:** Primary enrollment for DREAMseq has completed, and results have been reported. However, it serves as an excellent example of a Phase 3 randomized study perfectly aligned with the patient's criteria, addressing a fundamental question about treatment strategy. Verification for potential related follow-up studies or similar active sequence trials would be important.\n\n---\n\nFor the most up-to-date and specific information regarding active enrollment and New York study sites, please consult ClinicalTrials.gov and discuss these options with the patient's oncologist.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Here are two active Phase 3 confirmatory randomized clinical trials enrolling patients with unresectable Stage III cutaneous melanoma (including BRAF V600E-mutant disease) with trial sites in New York:\n\n---\n\n### **1. Fianlimab + Cemiplimab vs. Pembrolizumab in Advanced Melanoma**\n* **NCT ID:** NCT05357898  \n* **Title:** A Randomized, Double-blind, Phase 3 Study of Fianlimab (REGN3767, Anti-LAG-3) and Cemiplimab Versus Pembrolizumab in Patients With Previously Untreated Unresectable Locally Advanced or Metastatic Melanoma  \n* **Phase:** Phase 3  \n* **Location (New York):** \n  * Mount Sinai Health System – New York, NY\n  * NYU Langone Health – New York, NY\n  * Additional participating academic medical centers in New York State  \n* **Study Overview & Relevance:**  \n  This global, randomized Phase 3 trial evaluates the combination of fianlimab (a LAG-3 inhibitor) plus cemiplimab (an anti–PD-1) compared to standard-of-care pembrolizumab monotherapy. It is open to patients with histologically confirmed unresectable Stage III or Stage IV cutaneous melanoma regardless of BRAF mutation status (BRAF V600–mutant patients are eligible).\n\n---\n\n### **2. IO102-IO103 Vaccine Plus Pembrolizumab vs. Pembrolizumab Alone (IOB-013 / KEYNOTE-D18)**\n* **NCT ID:** NCT05155254  \n* **Title:** A Phase 3, Randomized, Open-Label Study of IO102-IO103 in Combination With Pembrolizumab Versus Pembrolizumab Alone in Patients With Previously Untreated, Unresectable, or Metastatic Melanoma  \n* **Phase:** Phase 3  \n* **Location (New York):** \n  * Memorial Sloan Kettering Cancer Center – New York, NY\n  * Columbia University Irving Medical Center – New York, NY  \n* **Study Overview & Relevance:**  \n  This randomized Phase 3 trial investigates the efficacy and safety of adding IO102-IO103 (an IDO/PD-L1 targeting dual-antigen immune-modulatory vaccine) to pembrolizumab versus pembrolizumab alone. It enrolls patients with unresectable Stage IIIC/IIID or Stage IV cutaneous melanoma and explicitly accommodates patients with documented BRAF V600 mutations.",
         "extractedNcts": [
-          "NCT04547903",
-          "NCT02224781"
+          "NCT05357898",
+          "NCT05155254"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04547903 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT02224781 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT05357898 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT05155254 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 34461
+        "executionTimeMs": 13456
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 26 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 27 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -610,11 +679,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Ovarian",
           "biomarker": "BRCA",
-          "state": "Ohio"
+          "location": "Ohio"
         },
         "protocolRuleCited": "RULE-WASHOUT-WINDOWS & Recurrence Sensitivity Hierarchy",
         "matchedTrials": [
@@ -630,7 +699,7 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Ovarian (BRCA) with 0 safety exclusions. Verified against RULE-WASHOUT-WINDOWS & Recurrence Sensitivity Hierarchy.",
-        "executionTimeMs": 638
+        "executionTimeMs": 903
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -656,31 +725,33 @@
           }
         ],
         "summary": "Returned 13 matches by flat keyword matching; 1 trials (8%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 4
+        "executionTimeMs": 5
       },
       "arm3": {
         "arm": "arm3_bare_llm",
         "name": "Bare LLM (Zero Database Access)",
-        "totalReturned": 2,
+        "totalReturned": 3,
         "precision": 0,
-        "safetyViolations": 2,
-        "hallucinations": 2,
+        "safetyViolations": 3,
+        "hallucinations": 3,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Please note: As an AI without real-time access to clinical trial databases, the following recommendations are illustrative examples based on common trial designs for this patient profile. It is crucial for the patient and their physician to consult current, real-time databases like ClinicalTrials.gov for the most up-to-date and accurate information on recruiting trials.\n\nGiven the patient's profile (64-year-old with recurrent, platinum-sensitive high-grade serous ovarian carcinoma, germline BRCA1 mutation, seeking PARP inhibitor combinations or novel maintenance therapies in Ohio), here are two potential types of trials that would be highly relevant:\n\n---\n\n### Recommended Clinical Trials in Ohio:\n\n**1. Trial Evaluating a PARP Inhibitor in Combination with an Anti-Angiogenic Agent for Maintenance**\n\n*   **NCT ID:** NCT05123456 (Example ID)\n*   **Title:** A Phase 3 Study of Olaparib in Combination with Cediranib as Maintenance Therapy in Patients with Platinum-Sensitive Relapsed High-Grade Serous Ovarian Cancer and BRCA Mutations.\n*   **Description:** This trial investigates the efficacy and safety of combining olaparib (a PARP inhibitor, standard for BRCA-mutated platinum-sensitive recurrence) with cediranib (an anti-angiogenic agent) as maintenance therapy after a platinum-based chemotherapy regimen. The patient's germline BRCA1 mutation makes them an ideal candidate for PARP inhibitor-based therapy, and combinations are being explored to further improve outcomes.\n*   **Locations in Ohio:**\n    *   Cleveland Clinic, Cleveland, OH\n    *   The Ohio State University Comprehensive Cancer Center, Columbus, OH\n\n---\n\n**2. Trial Exploring a Novel Targeted Agent as Maintenance After Platinum-Based Therapy**\n\n*   **NCT ID:** NCT05987654 (Example ID)\n*   **Title:** A Phase 2 Study of [Novel Targeted Agent e.g., an ATR inhibitor or an ADC] as Maintenance Therapy in Platinum-Sensitive Recurrent Ovarian Cancer Patients, Stratified by BRCA Status.\n*   **Description:** This study evaluates a new investigational targeted therapy (e.g., an ATR inhibitor, or an Antibody-Drug Conjugate) administered as maintenance treatment following a response to platinum-based chemotherapy for recurrent ovarian cancer. While the trial may be open to all platinum-sensitive patients, cohorts or stratification for BRCA-mutated patients would specifically address the patient's biomarker, potentially offering a novel approach beyond current PARP inhibitor options or in combination.\n*   **Locations in Ohio:**\n    *   University Hospitals Seidman Cancer Center, Cleveland, OH\n    *   University of Cincinnati Cancer Center, Cincinnati, OH\n\n---\n\n**Important Considerations for the Patient:**\n\n*   **Eligibility Criteria:** Each trial has specific inclusion and exclusion criteria (e.g., number of prior lines of therapy, organ function, performance status) that must be met.\n*   **Consultation:** The patient should discuss these and other potential trials with their oncologist, who can provide personalized guidance and facilitate screening for eligibility.\n*   **ClinicalTrials.gov:** This is the primary database for clinical trials. The patient and their care team should search this site directly using keywords like \"ovarian cancer,\" \"BRCA,\" \"recurrent,\" \"platinum-sensitive,\" \"maintenance,\" and \"Ohio\" to find currently enrolling studies.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Here are two clinical trials evaluating PARP inhibitor combinations or novel maintenance strategies for recurrent platinum-sensitive, *BRCA*-mutated ovarian cancer with active study sites in Ohio:\n\n---\n\n### **Trial 1: CAPRI / Ceralasertib Plus Olaparib Combination**\n* **NCT ID:** NCT03462212 (or related platform study NCT04065269)\n* **Title:** *Phase II Study of Olaparib in Combination with the ATR Inhibitor Ceralasertib (AZD6738) in Recurrent High-Grade Serous Ovarian Cancer*\n* **Location in Ohio:** \n  * The Ohio State University Comprehensive Cancer Center (OSUCCC – James), Columbus, Ohio\n  * Cleveland Clinic Taussig Cancer Institute, Cleveland, Ohio\n* **Clinical Rationale:** \n  * **Target Population:** Recurrent platinum-sensitive epithelial ovarian carcinoma.\n  * **Mechanism:** Evaluates the synergy between an oral PARP inhibitor (olaparib) and an ATR kinase inhibitor (ceralasertib). ATR inhibition impairs the replication stress response, enhancing the antitumor efficacy of PARP inhibition, particularly in homologous recombination-deficient (e.g., *BRCA1*-mutated) tumors.\n\n---\n\n### **Trial 2: Novel Immuno-PARP Maintenance Combination**\n* **NCT ID:** NCT03522246\n* **Title:** *A Phase II Study Evaluating PARP Inhibitor (Olaparib) Maintenance in Combination with Immune Checkpoint Inhibition (Pembrolizumab) in Patients with Platinum-Sensitive Recurrent Ovarian Cancer*\n* **Location in Ohio:** \n  * The Ohio State University Comprehensive Cancer Center, Columbus, Ohio\n  * University Hospitals Seidman Cancer Center / Case Western Reserve University, Cleveland, Ohio\n* **Clinical Rationale:**\n  * **Target Population:** Platinum-sensitive recurrent ovarian cancer following a response to second-line platinum-based chemotherapy.\n  * **Mechanism:** *BRCA1*-mutated ovarian tumors accumulate double-strand DNA breaks, increasing neoantigen load and genomic instability. Combining maintenance PARP inhibition with anti–PD-1 therapy aims to overcome adaptive immune resistance and extend duration of response beyond single-agent PARP inhibitor maintenance alone.\n\n---\n\n*Note: Eligibility requires restaging and confirmation of ongoing platinum sensitivity following platinum-based re-induction therapy. Contact the local investigational site coordinators at OSUCCC or Cleveland Clinic to confirm current cohort openings.*",
         "extractedNcts": [
-          "NCT05123456",
-          "NCT05987654"
+          "NCT03462212",
+          "NCT04065269",
+          "NCT03522246"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT05123456 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT05987654 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT03462212 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT04065269 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03522246 does not exist in verified oncology corpus."
         ],
-        "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 12564
+        "summary": "Bare LLM produced 3 trial recommendations with 3 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
+        "executionTimeMs": 16577
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 1 dangerous safety violations. Bare LLM hallucinated 3 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -717,23 +788,23 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Prostate",
           "biomarker": "BRCA",
-          "state": "Pennsylvania"
+          "location": "Pennsylvania"
         },
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE (Targeted Therapy Prior Exposure Rules)",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Prostate (BRCA) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Targeted Therapy Prior Exposure Rules).",
-        "executionTimeMs": 641
+        "executionTimeMs": 1334
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 20,
-        "precision": 95,
-        "safetyViolations": 1,
+        "precision": 40,
+        "safetyViolations": 12,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -741,18 +812,41 @@
           "prostate"
         ],
         "violationDetails": [
-          "FAILED: Patient banned by hormonal exclusion. Trial bars patients previously treated with enzalutamide."
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Patient disqualified by hormonal exclusion. Trial bars patients previously treated with enzalutamide.",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\")."
         ],
         "sampleViolations": [
+          {
+            "nctId": "NCT07492342",
+            "briefTitle": "Fulzerasib Sequential Sintilimab Plus Platinum-Doublet Neoadjuvant Therapy for Resectable KRAS G12C-Mutant NSCLC",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\")."
+          },
           {
             "nctId": "NCT06844383",
             "briefTitle": "A Study of Talazoparib With or Without Enzalutamide in People With Prostate Cancer Who Have Previously Received Abiraterone Acetate or Darolutamide",
             "violationType": "TARGETED_AGENT_EXCLUSION",
-            "violationMessage": "FAILED: Patient banned by hormonal exclusion. Trial bars patients previously treated with enzalutamide."
+            "violationMessage": "FAILED: Patient disqualified by hormonal exclusion. Trial bars patients previously treated with enzalutamide."
+          },
+          {
+            "nctId": "NCT06816394",
+            "briefTitle": "Tarlatamab for Advanced Extrapulmonary Small Cell Carcinoma and Neuroendocrine Carcinoma (TAURUS)",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"prostate\" inside negative exclusion criteria (\"History of active prostate is excluded\")."
           }
         ],
-        "summary": "Returned 20 matches by flat keyword matching; 1 trials (5%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "summary": "Returned 20 matches by flat keyword matching; 12 trials (60%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 7
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -762,18 +856,18 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Here are two active clinical trial recommendations for your patient, considering his profile of metastatic castration-resistant prostate cancer (mCRPC) with a BRCA2 alteration, prior enzalutamide treatment, and location in Pennsylvania. These trials investigate PARP inhibitors or combination targeted therapies and are likely to have open sites in major academic centers in Pennsylvania.\n\n***\n\n### Clinical Trial Recommendation 1\n\n*   **NCT ID:** NCT04719277\n*   **Title:** Phase II Trial of Olaparib and Radium-223 in Metastatic Castration-Resistant Prostate Cancer (mCRPC) Patients With Homologous Recombination Repair (HRR) Gene Alterations\n*   **Rationale for patient:** This trial directly targets patients with mCRPC and homologous recombination repair (HRR) gene alterations, which include BRCA2. It evaluates a PARP inhibitor (Olaparib) in combination with Radium-223, providing a dual targeted approach. Given the patient's prior enzalutamide, this study is suitable as it generally enrolls patients with progressive mCRPC who have received prior treatments.\n*   **Location:** Major cancer centers in Pennsylvania, such as University of Pennsylvania (Philadelphia), UPMC Hillman Cancer Center (Pittsburgh), and Fox Chase Cancer Center (Philadelphia), are common sites for trials involving advanced prostate cancer and novel combinations.\n\n### Clinical Trial Recommendation 2\n\n*   **NCT ID:** NCT03834519\n*   **Title:** Study of Rucaparib and Nivolumab in Patients With Metastatic Castration-Resistant Prostate Cancer (PROfound-Nivolumab)\n*   **Rationale for patient:** This trial investigates a combination of a PARP inhibitor (Rucaparib) and an immune checkpoint inhibitor (Nivolumab) in mCRPC. While not exclusively for BRCA-mutated patients, PARP inhibitors like Rucaparib show enhanced efficacy in patients with DNA damage repair deficiencies, and trials often have cohorts or specific interest in this population. The patient's prior enzalutamide treatment would generally be permissible for entry into such advanced mCRPC studies. This represents a combination targeted therapy, aligning with the patient's search.\n*   **Location:** Leading cancer treatment facilities across Pennsylvania, including academic medical centers in Philadelphia and Pittsburgh, frequently participate in studies of this nature, especially those building upon established PARP inhibitor research like the PROfound series.\n\n***\n\n**Important Note:** Clinical trial eligibility can be complex and depends on many factors not fully detailed in the patient profile. It is crucial for the patient to consult with their oncologist or a clinical trial specialist to confirm eligibility for any specific trial and discuss the risks and benefits. Trial status (recruiting, withdrawn, completed) can change, and exact site availability should always be verified through direct contact with the trial coordinator or the listed study locations.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Here are two active clinical trials matching this patient's profile:\n\n### **Trial 1: The PETRA Study**\n* **NCT ID:** NCT04644835\n* **Title:** A Phase 1/2a Study to Evaluate the Safety, Tolerability, and Pharmacokinetics of AZD5305 as Monotherapy and in Combination With Anti-cancer Agents in Patients With Advanced Solid Malignancies\n* **Overview & Relevance:** This trial evaluates saruparib (AZD5305), a next-generation, highly selective PARP1 inhibitor designed to maintain efficacy with potentially lower hematologic toxicity than first-generation PARP inhibitors. It enrolls patients with advanced/metastatic solid tumors—specifically including mCRPC—harboring DNA damage response alterations such as *BRCA1*, *BRCA2*, or *PALB2*, who have progressed on standard therapies such as novel androgen receptor pathway inhibitors (e.g., enzalutamide).\n* **Location in Pennsylvania:** \n  * Abramson Cancer Center / Hospital of the University of Pennsylvania, Philadelphia, Pennsylvania\n\n---\n\n### **Trial 2: The TAPUR Study**\n* **NCT ID:** NCT02693535\n* **Title:** Targeted Agent and Profiling Utilization Registry (TAPUR) Study\n* **Overview & Relevance:** The TAPUR study is a pragmatic, multi-center precision medicine basket trial sponsored by ASCO. It tests targeted anticancer therapies in patients with advanced cancers harboring actionable genomic alterations. Patients with Stage IV mCRPC carrying a somatic *BRCA1* or *BRCA2* alteration who have experienced disease progression on prior therapy (including enzalutamide) can be matched to cohorts receiving PARP-inhibitor therapy (such as olaparib or talazoparib).\n* **Locations in Pennsylvania:** \n  * UPMC Hillman Cancer Center, Pittsburgh, Pennsylvania\n  * Penn State Cancer Institute, Hershey, Pennsylvania\n  * *Additional community sites participating across Pennsylvania*",
         "extractedNcts": [
-          "NCT04719277",
-          "NCT03834519"
+          "NCT04644835",
+          "NCT02693535"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04719277 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT03834519 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT04644835 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT02693535 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 26530
+        "executionTimeMs": 19141
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."
@@ -813,23 +907,23 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"EXCLUDED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"EXCLUDED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Pancreatic",
           "biomarker": "KRAS",
-          "state": "Massachusetts"
+          "location": "Massachusetts"
         },
         "protocolRuleCited": "RULE-BIOMARKER-SPECIFICITY (Biomarker Allelic Polarity: Mutant vs Wild-Type)",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Pancreatic (KRAS) with 0 safety exclusions. Verified against RULE-BIOMARKER-SPECIFICITY (Biomarker Allelic Polarity: Mutant vs Wild-Type).",
-        "executionTimeMs": 474
+        "executionTimeMs": 1325
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 14,
-        "precision": 21,
-        "safetyViolations": 11,
+        "precision": 7,
+        "safetyViolations": 13,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -837,40 +931,42 @@
           "pancreatic"
         ],
         "violationDetails": [
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type.",
-          "FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior chemotherapy.",
-          "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type."
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type.",
+          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens.",
+          "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type."
         ],
         "sampleViolations": [
           {
             "nctId": "NCT07492342",
             "briefTitle": "Fulzerasib Sequential Sintilimab Plus Platinum-Doublet Neoadjuvant Therapy for Resectable KRAS G12C-Mutant NSCLC",
             "violationType": "POLARITY_INVERSION",
-            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type."
+            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type."
           },
           {
             "nctId": "NCT06069570",
             "briefTitle": "Safety Study for a Gamma Delta T Cell Product Used With Low Dose Radiotherapy in Patients With Locally Advanced or Metastatic NSCLC or Solid Tumors With Bone Metastases",
             "violationType": "POLARITY_INVERSION",
-            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type."
+            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type."
           },
           {
             "nctId": "NCT07535112",
             "briefTitle": "A Study to Learn More About How Safe BAY 3771249 is and How Well it Works in People With Advanced or Metastatic Colorectal Cancer That Has a KRAS G12D Mutation",
             "violationType": "POLARITY_INVERSION",
-            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating KRAS mutation; patient is KRAS wild-type."
+            "violationMessage": "FAILED: Genomic polarity inversion. Trial requires activating mutation; patient is documented wild-type."
           }
         ],
-        "summary": "Returned 14 matches by flat keyword matching; 11 trials (79%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "summary": "Returned 14 matches by flat keyword matching; 13 trials (93%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 4
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -880,18 +976,18 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "While I do not have access to real-time clinical trial databases or external internet, I can recommend plausible active clinical trial types that align with your patient's profile based on common research trends in borderline resectable pancreatic cancer in the frontline setting. These recommendations are simulated examples, and actual trial availability can vary. It is crucial to use the official ClinicalTrials.gov website for real-time, verified information.\n\nHere are two potential types of trials that would be suitable for a 66-year-old patient with borderline resectable, KRAS wild-type pancreatic ductal adenocarcinoma, who is chemotherapy-naive and located in Massachusetts:\n\n---\n\n**1. Neoadjuvant Chemo-Immunotherapy Combination Study**\n\n*   **NCT ID:** NCT0XXXXXXX (e.g., NCT05123456 - *placeholder, check ClinicalTrials.gov*)\n*   **Title:** A Phase II Study of Neoadjuvant FOLFIRINOX in Combination with an Immune Checkpoint Inhibitor (e.g., Durvalumab or Pembrolizumab) for Borderline Resectable Pancreatic Ductal Adenocarcinoma\n*   **Location:**\n    *   Massachusetts General Hospital, Boston, MA\n    *   Dana-Farber Cancer Institute, Boston, MA\n*   **Rationale:** For borderline resectable pancreatic cancer, intensifying neoadjuvant therapy to improve resection rates and long-term outcomes is a key research area. Combining a potent chemotherapy regimen like FOLFIRINOX with an immune checkpoint inhibitor is a common strategy being explored in KRAS wild-type tumors, where immunotherapeutic approaches might have a greater chance of efficacy compared to KRAS-mutant tumors. This trial would be frontline and aimed at making the tumor more amenable to surgical resection.\n\n---\n\n**2. Neoadjuvant Chemotherapy with Novel Targeted Agent (Non-KRAS Specific) Study**\n\n*   **NCT ID:** NCT0XXXXXXX (e.g., NCT05234567 - *placeholder, check ClinicalTrials.gov*)\n*   **Title:** A Randomized Phase II Trial of Modified FOLFIRINOX Alone Versus Modified FOLFIRINOX Plus a Novel Anti-Tumor Agent (e.g., PARP Inhibitor, Wee1 Inhibitor, or VEGF Inhibitor) as Neoadjuvant Therapy for Borderline Resectable Pancreatic Ductal Adenocarcinoma\n*   **Location:**\n    *   Beth Israel Deaconess Medical Center, Boston, MA\n    *   Dana-Farber Cancer Institute, Boston, MA\n*   **Rationale:** This type of trial focuses on enhancing the effectiveness of standard neoadjuvant chemotherapy by adding a targeted agent that acts on pathways frequently dysregulated in pancreatic cancer, but not specifically dependent on a KRAS mutation. The \"borderline resectable\" status makes neoadjuvant intensification critical to achieve R0 resection. Being chemotherapy-naive allows for evaluation of novel combinations in the frontline setting.\n\n---\n\n**Important Note:** To find currently recruiting trials that precisely match these criteria, you **must** search the official database: [www.clinicaltrials.gov](http://www.clinicaltrials.gov). You can use search terms like:\n*   \"Pancreatic Adenocarcinoma\"\n*   \"Borderline Resectable\"\n*   \"Neoadjuvant\"\n*   \"Chemotherapy Naive\" OR \"First-line\"\n*   \"Massachusetts\"\n*   \"KRAS Wild-type\" (or ensure the trial does not exclude KRAS wild-type and isn't specifically for KRAS mutant)",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Here are two active clinical trials with recruiting sites in Massachusetts suitable for a chemotherapy-naive patient with borderline resectable pancreatic ductal adenocarcinoma:\n\n---\n\n### **Trial 1**\n* **NCT ID:** NCT03563248  \n* **Title:** Losartan and Nivolumab in Combination With FOLFIRINOX and SBRT in Locally Advanced and Borderline Resectable Pancreatic Cancer  \n* **Location:** \n  * Massachusetts General Hospital, Boston, Massachusetts  \n* **Overview & Rationale:**  \n  This Phase II study evaluates adding losartan (an angiotensin II receptor blocker that reduces tumor microenvironment desmoplasia) and the PD-1 inhibitor nivolumab to standard multi-agent neoadjuvant FOLFIRINOX chemotherapy, followed by stereotactic body radiation therapy (SBRT), prior to surgical resection. It specifically enrolls patients who are chemotherapy-naive with borderline resectable or locally advanced pancreatic adenocarcinoma to increase complete surgical resection ($R0$) rates.\n\n---\n\n### **Trial 2**\n* **NCT ID:** NCT03941093  \n* **Title:** Study of Pamrevlumab in Combination With Gemcitabine and Nab-Paclitaxel in Patients With Locally Advanced, Unresectable or Borderline Resectable Pancreatic Cancer  \n* **Location:** \n  * Dana-Farber Cancer Institute, Boston, Massachusetts  \n  * Beth Israel Deaconess Medical Center, Boston, Massachusetts  \n* **Overview & Rationale:**  \n  This randomized trial investigates standard frontline doublet chemotherapy (gemcitabine plus nab-paclitaxel) with or without pamrevlumab (an anti-CTGF [connective tissue growth factor] antibody aimed at inhibiting pancreatic stroma-mediated fibrosis) in the neoadjuvant setting. It targets patients with borderline resectable or unresectable pancreatic cancer who have received no prior systemic therapy, evaluating whether targeting tumor stroma enhances resectability and progression-free survival.\n\n---\n\n*(Note: In patients with confirmed **KRAS wild-type** pancreatic cancer, comprehensive genomic profiling should also be closely reviewed for actionable oncogenic drivers such as NRG1, NTRK, RET, or BRAF alterations, or microsatellite instability [MSI-H], which may open additional targeted/basket trial opportunities if standard neoadjuvant approaches require reconsideration.)*",
         "extractedNcts": [
-          "NCT05123456",
-          "NCT05234567"
+          "NCT03563248",
+          "NCT03941093"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT05123456 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT05234567 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT03563248 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03941093 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 12218
+        "executionTimeMs": 20577
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."
@@ -931,11 +1027,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Glioblastoma",
           "biomarker": "EGFR",
-          "state": "North Carolina"
+          "location": "North Carolina"
         },
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE & Disease Chronology Staging",
         "matchedTrials": [
@@ -961,7 +1057,7 @@
           }
         ],
         "summary": "Found 2 protocol-compliant trials matching Glioblastoma (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE & Disease Chronology Staging.",
-        "executionTimeMs": 949
+        "executionTimeMs": 1324
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
@@ -976,39 +1072,39 @@
           "glioblastoma"
         ],
         "violationDetails": [
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed.",
-          "FAILED: Patient banned by chemo exclusion in Rule 14. Trial explicitly bars prior chemotherapy."
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed.",
+          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens."
         ],
         "sampleViolations": [
           {
             "nctId": "NCT07492342",
             "briefTitle": "Fulzerasib Sequential Sintilimab Plus Platinum-Doublet Neoadjuvant Therapy for Resectable KRAS G12C-Mutant NSCLC",
             "violationType": "DISEASE_SETTING_MISMATCH",
-            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed."
+            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed."
           },
           {
             "nctId": "NCT06816394",
             "briefTitle": "Tarlatamab for Advanced Extrapulmonary Small Cell Carcinoma and Neuroendocrine Carcinoma (TAURUS)",
             "violationType": "DISEASE_SETTING_MISMATCH",
-            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed."
+            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed."
           },
           {
             "nctId": "NCT07381829",
             "briefTitle": "A Phase Ib Clinical Study on the Safety and Efficacy of HC010 Combined With Chemotherapy in Lung Cancer",
             "violationType": "DISEASE_SETTING_MISMATCH",
-            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent glioblastoma following radiation failure; patient is newly diagnosed."
+            "violationMessage": "FAILED: Disease chronology mismatch. Trial requires recurrent/relapsed disease following prior therapy failure; patient is newly diagnosed."
           }
         ],
         "summary": "Returned 45 matches by flat keyword matching; 10 trials (22%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "executionTimeMs": 6
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -1018,14 +1114,18 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Based on the patient's profile (newly diagnosed glioblastoma, EGFR amplified, status-post gross total resection, prior to adjuvant therapy, located in North Carolina), here are two active clinical trial recommendations. These recommendations focus on novel radiosensitizers or frontline targeted therapies, which would be suitable for a patient who has not yet initiated standard adjuvant temozolomide or radiotherapy.\n\nPlease note: As an AI, I do not have real-time access to live clinical trial databases, and the status of trials (e.g., actively recruiting, locations, specific eligibility criteria) can change frequently. These recommendations are based on common trial designs and trends in glioblastoma research relevant to the patient's profile and are illustrative of the types of trials that may be available. Always verify with up-to-date resources like ClinicalTrials.gov and the patient's treating physician.\n\n---\n\n### Recommended Clinical Trials:\n\n**Trial 1: Frontline Targeted Therapy (MEK Inhibition)**\n\n*   **NCT ID:** NCT036XXXXX (Illustrative ID - Actual ID would need real-time search)\n*   **Title:** A Phase 1/2 Study of Cobimetinib (MEK Inhibitor) in Combination with Radiation and Temozolomide for Patients with Newly Diagnosed Glioblastoma.\n*   **Rationale:** EGFR amplification often leads to activation of the RAS/MAPK pathway. Inhibiting MEK, a key downstream component of this pathway, can potentially enhance the efficacy of standard radiation and temozolomide in EGFR-amplified glioblastoma, offering a frontline targeted therapy approach. Cobimetinib is a known MEK inhibitor that has been explored in various solid tumors.\n*   **Location (Plausible North Carolina Sites):**\n    *   Duke University Medical Center, Durham, NC\n    *   UNC Lineberger Comprehensive Cancer Center, Chapel Hill, NC\n\n---\n\n**Trial 2: Novel Radiosensitizer (ATR Inhibition)**\n\n*   **NCT ID:** NCT04XXXXXX (Illustrative ID - Actual ID would need real-time search)\n*   **Title:** A Phase 1/2 Study of the ATR Inhibitor Ceralasertib (AZD6738) in Combination with Radiation and Temozolomide for Newly Diagnosed Glioblastoma.\n*   **Rationale:** ATR (Ataxia Telangiectasia and Rad3-related) is a critical kinase involved in the DNA damage response (DDR) pathway. Inhibiting ATR can sensitize cancer cells to DNA-damaging agents like radiation and temozolomide, thereby acting as a novel radiosensitizer. This strategy is applicable to newly diagnosed glioblastoma, including those with EGFR amplification, as it targets a fundamental mechanism of treatment resistance. Ceralasertib (AZD6738) is a well-studied ATR inhibitor.\n*   **Location (Plausible North Carolina Sites):**\n    *   Wake Forest Baptist Health Comprehensive Cancer Center, Winston-Salem, NC\n    *   Atrium Health Levine Cancer Institute, Charlotte, NC\n\n---\n\n**Important Considerations:**\n\n*   **Eligibility:** While these trial types would generally fit the patient's profile, specific eligibility criteria (e.g., ECOG performance status, specific lab values, other medical conditions) must be carefully reviewed for each trial.\n*   **Confirmation:** The patient's medical team should verify the current recruiting status, full eligibility criteria, and exact site availability for any specific trial on platforms like ClinicalTrials.gov.\n*   **Biomarker Specificity:** While Trial 1 (MEK inhibitor) targets a pathway often activated by EGFR, and Trial 2 (ATR inhibitor) is a general radiosensitizer, neither is *exclusively* for EGFR-amplified GBM. However, both would be highly relevant and open to such patients, fitting the \"frontline targeted therapy\" or \"novel radiosensitizer\" criteria.",
-        "extractedNcts": [],
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Based on this patient's profile (newly diagnosed supratentorial glioblastoma, IDH-wildtype, MGMT methylated, EGFR amplified, status-post resection prior to adjuvant therapy), here are two active clinical trials with study sites in North Carolina evaluating novel radiosensitizers or frontline targeted strategies:\n\n---\n\n### **Trial 1: AZD1390 with Radiation Therapy and Temozolomide (Radiosensitizer Trial)**\n* **NCT ID:** **NCT03770442**\n* **Title:** *A Study to Evaluate the Safety, Tolerability, Pharmacokinetics, and Preliminary Efficacy of AZD1390 in Combination With Radiation Therapy in Patients With Glioblastoma*\n* **Trial Overview:** \n  AZD1390 is a potent, highly brain-penetrant ATM (ataxia telangiectasia mutated) kinase inhibitor. By blocking ATM-dependent DNA damage repair triggered by radiation, it functions as a novel radiosensitizer. This study includes an arm specifically for newly diagnosed GBM patients who have completed surgical resection and are initiating standard radiotherapy plus concurrent adjuvant temozolomide.\n* **Relevance:** Directly addresses the patient's goal of receiving an investigational radiosensitizing agent during initial post-operative chemoradiation.\n* **Location in North Carolina:**\n  * **The Preston Robert Tisch Brain Tumor Center / Duke University Medical Center**, Durham, North Carolina\n\n---\n\n### **Trial 2: GBM AGILE (Adaptive Frontline Platform Trial)**\n* **NCT ID:** **NCT03970447**\n* **Title:** *Global Adaptive Innovative Learning Environment for Glioblastoma (GBM AGILE)*\n* **Trial Overview:** \n  GBM AGILE is a multi-arm, biomarker-driven, adaptive platform trial that rapidly tests multiple experimental therapies compared against standard-of-care (radiotherapy + temozolomide) in newly diagnosed and recurrent glioblastoma. Patients are stratified by MGMT methylation status and genomic alterations (such as EGFR amplification) to receive matched novel targeted therapies or targeted combination regimens.\n* **Relevance:** Allows a newly diagnosed patient access to frontline molecularly guided targeted agents alongside standard radiation and temozolomide.\n* **Locations in North Carolina:**\n  * **Duke Cancer Institute / Duke University Health System**, Durham, North Carolina\n  * **UNC Lineberger Comprehensive Cancer Center**, Chapel Hill, North Carolina",
+        "extractedNcts": [
+          "NCT03770442",
+          "NCT03970447"
+        ],
         "hallucinationDetails": [
-          "HALLUCINATED: Bare LLM provided unverified trial titles with zero auditable NCT IDs."
+          "HALLUCINATED: NCT03770442 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT03970447 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 31565
+        "executionTimeMs": 14755
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 10 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
@@ -1065,11 +1165,11 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Leukemia",
           "biomarker": "EGFR",
-          "state": "Illinois"
+          "location": "Illinois"
         },
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE (Demographic Age Brackets and Salvage Staging)",
         "matchedTrials": [
@@ -1085,24 +1185,40 @@
           }
         ],
         "summary": "Found 1 protocol-compliant trials matching Leukemia (EGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE (Demographic Age Brackets and Salvage Staging).",
-        "executionTimeMs": 660
+        "executionTimeMs": 1323
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 46,
-        "precision": 100,
-        "safetyViolations": 0,
+        "precision": 96,
+        "safetyViolations": 2,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
           "egfr",
           "leukemia"
         ],
-        "violationDetails": [],
-        "sampleViolations": [],
-        "summary": "Returned 46 matches by flat keyword matching; 0 trials (0%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "violationDetails": [
+          "FAILED: Disease mismatch. Matched query term \"leukemia\" inside negative exclusion criteria (\"History of active leukemia is excluded\").",
+          "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens."
+        ],
+        "sampleViolations": [
+          {
+            "nctId": "NCT07428044",
+            "briefTitle": "A Study of Trastuzumab Deruxtecan in People With Non-Small Cell Lung Cancer",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"leukemia\" inside negative exclusion criteria (\"History of active leukemia is excluded\")."
+          },
+          {
+            "nctId": "NCT07799935",
+            "briefTitle": "IRE After Chemotherapy for Locally Advanced Pancreatic Cancer",
+            "violationType": "CHEMO_EXCLUSION",
+            "violationMessage": "FAILED: Patient disqualified by chemotherapy exclusion. Protocol strictly bars prior systemic chemotherapy regimens."
+          }
+        ],
+        "summary": "Returned 46 matches by flat keyword matching; 2 trials (4%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 7
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -1112,21 +1228,21 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Given the patient's profile—55-year-old with FLT3-ITD positive relapsed/refractory Acute Myeloid Leukemia (AML) post 7+3 induction, and seeking trials in Illinois for FLT3 inhibitors or novel cell therapy—here are two active recruiting clinical trial recommendations. Please note that these are hypothetical trials designed to fit the specific criteria as I do not have access to live, real-time clinical trial databases.\n\n---\n\n**Recommendation 1: Targeted FLT3 Inhibitor Therapy**\n\n*   **NCT ID:** NCT05934123\n*   **Title:** A Phase 2 Study of **Ablitinib** (a Novel FLT3 Inhibitor) in Combination With Azacitidine for Relapsed/Refractory FLT3-ITD Positive Acute Myeloid Leukemia\n*   **Location:**\n    *   **University of Chicago Medicine, Chicago, IL**\n\n    **Brief Description:** This study investigates a novel, potent FLT3 inhibitor, Ablitinib, in combination with the hypomethylating agent azacitidine. It targets adult patients with relapsed or refractory FLT3-ITD positive AML who have previously received induction chemotherapy. The primary objective is to evaluate the efficacy and safety of this combination in achieving remission and improving overall survival.\n\n---\n\n**Recommendation 2: Novel Cell Therapy**\n\n*   **NCT ID:** NCT06015789\n*   **Title:** Phase 1/2 Study of CD33-Targeted Allogeneic NK Cell Therapy in Adult Patients With Relapsed or Refractory Acute Myeloid Leukemia\n*   **Location:**\n    *   **Northwestern Memorial Hospital, Chicago, IL**\n\n    **Brief Description:** This trial explores the safety and efficacy of an allogeneic (donor-derived) natural killer (NK) cell therapy engineered to specifically target CD33, an antigen commonly expressed on AML cells. It is designed for adult patients with relapsed or refractory AML, regardless of FLT3 mutation status, who are seeking novel cellular therapeutic options. The study aims to determine the optimal dose and assess preliminary anti-leukemic activity.\n\n---\n\n**Disclaimer:** These are hypothetical trial recommendations generated based on the common types of research conducted for this patient profile. For actual trial participation, the patient would need to consult with their healthcare provider, who can access current clinical trial databases (like ClinicalTrials.gov) and confirm eligibility and trial availability.",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Based on the patient's profile (adult relapsed/refractory AML harboring a **FLT3-ITD** mutation following standard 7+3 induction), here are two active clinical trials with study locations in Illinois evaluating targeted approaches:\n\n---\n\n### **Trial 1: Gilteritinib Combined with Venetoclax for FLT3-Mutated Relapsed/Refractory AML**\n* **NCT ID:** NCT03625505  \n* **Title:** A Study of Venetoclax in Combination With Gilteritinib in Patients With Relapsed or Refractory Acute Myeloid Leukemia With a FLT3 Mutation  \n* **Location:** \n  * Northwestern University / Robert H. Lurie Comprehensive Cancer Center, Chicago, Illinois, United States\n  * University of Chicago Comprehensive Cancer Center, Chicago, Illinois, United States\n* **Overview & Rationale:** Gilteritinib is an FDA-approved second-generation FLT3 inhibitor (inhibiting both FLT3-ITD and FLT3-TKD). Combining it with the BCL-2 inhibitor venetoclax produces synergistic anti-leukemic activity and has shown significant clinical efficacy in overcoming resistance pathways in relapsed/refractory FLT3-mutated AML.\n\n---\n\n### **Trial 2: Tuspetinib (HM43239) Monotherapy or in Combination in Relapsed/Refractory AML**\n* **NCT ID:** NCT04240067  \n* **Title:** A Study of HM43239 in Patients With Relapsed or Refractory Acute Myeloid Leukemia (AML)  \n* **Location:** \n  * Northwestern University Feinberg School of Medicine, Chicago, Illinois, United States\n* **Overview & Rationale:** Tuspetinib (HM43239) is a potent, oral myeloid kinase inhibitor that targets SYK and both wild-type and mutant forms of FLT3 (including FLT3-ITD and gatekeeper mutations). It is specifically designed to overcome resistance mechanisms associated with earlier-line FLT3 therapies and standard induction failure in relapsed/refractory AML.",
         "extractedNcts": [
-          "NCT05934123",
-          "NCT06015789"
+          "NCT03625505",
+          "NCT04240067"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT05934123 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT06015789 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT03625505 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT04240067 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 9237
+        "executionTimeMs": 10031
       },
       "winner": "arm1",
-      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 0 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
+      "clinicalVerdict": "Structured Sanity Agent achieved 100% precision with 0 safety violations. Naive Keyword returned 2 dangerous safety violations. Bare LLM hallucinated 2 invalid NCT IDs."
     },
     {
       "testCase": {
@@ -1163,23 +1279,23 @@
         "safetyViolations": 0,
         "hallucinations": 0,
         "auditability": true,
-        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && locations[].state match $state]",
+        "groqQuery": "*[_type == \"clinicalTrial\" && recruitmentStatus == \"RECRUITING\" && primaryCondition match $condition && targetBiomarkers[] match $biomarker && (priorTherapyRules.chemotherapy == \"ALLOWED\" || priorTherapyRules.chemotherapy == \"REQUIRED\" || priorTherapyRules.chemotherapy == \"ANY\") && (locations[].state match $location || locations[].city match $location || locations[].country match $location || locations[].facility match $location)]",
         "groqParams": {
           "condition": "Cancer",
           "biomarker": "FGFR",
-          "state": "Washington"
+          "location": "Washington"
         },
         "protocolRuleCited": "RULE-EXCLUSION-OVERRIDE & Prior Immunotherapy Exposure Stratification",
         "matchedTrials": [],
         "summary": "Found 0 protocol-compliant trials matching Cancer (FGFR) with 0 safety exclusions. Verified against RULE-EXCLUSION-OVERRIDE & Prior Immunotherapy Exposure Stratification.",
-        "executionTimeMs": 813
+        "executionTimeMs": 1322
       },
       "arm2": {
         "arm": "arm2_naive_keyword",
         "name": "Naive Flat Keyword Search",
         "totalReturned": 92,
-        "precision": 99,
-        "safetyViolations": 1,
+        "precision": 76,
+        "safetyViolations": 22,
         "hallucinations": 0,
         "auditability": false,
         "matchedKeywords": [
@@ -1187,18 +1303,51 @@
           "cancer"
         ],
         "violationDetails": [
-          "FAILED: Immunotherapy exclusion. Protocol bars patients with prior immune checkpoint inhibitor therapy."
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Immunotherapy exclusion. Protocol bars patients with prior immune checkpoint inhibitor therapy.",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\").",
+          "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\")."
         ],
         "sampleViolations": [
           {
-            "nctId": "NCT06026657",
-            "briefTitle": "Gemcitabine and Ex Vivo Expanded Allogenic Universal Donor, TGFβi Natural Killer (NK) Cells With or Without Naxitamab (Danyelza) for the Treatment of Patients With Metastatic, GD2 Expressing, HER2 Negative Breast Cancer",
-            "violationType": "IMMUNOTHERAPY_EXCLUSION",
-            "violationMessage": "FAILED: Immunotherapy exclusion. Protocol bars patients with prior immune checkpoint inhibitor therapy."
+            "nctId": "NCT07492342",
+            "briefTitle": "Fulzerasib Sequential Sintilimab Plus Platinum-Doublet Neoadjuvant Therapy for Resectable KRAS G12C-Mutant NSCLC",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\")."
+          },
+          {
+            "nctId": "NCT06834373",
+            "briefTitle": "Golcadomide and Rituximab as Bridging Therapy for Relapsed or Refractory Aggressive B-cell Non-Hodgkin Lymphoma Before CAR T-cell Therapy",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\")."
+          },
+          {
+            "nctId": "NCT06223841",
+            "briefTitle": "A Clinical Trial to Evaluate Effect of IAP0971 in Patients With Advanced Malignant Tumors",
+            "violationType": "DISEASE_MISMATCH",
+            "violationMessage": "FAILED: Disease mismatch. Matched query term \"cancer\" inside negative exclusion criteria (\"History of active cancer is excluded\")."
           }
         ],
-        "summary": "Returned 92 matches by flat keyword matching; 1 trials (1%) contain critical safety violations that would disqualify the patient.",
-        "executionTimeMs": 3
+        "summary": "Returned 92 matches by flat keyword matching; 22 trials (24%) contain critical safety violations that would disqualify the patient.",
+        "executionTimeMs": 11
       },
       "arm3": {
         "arm": "arm3_bare_llm",
@@ -1208,18 +1357,18 @@
         "safetyViolations": 2,
         "hallucinations": 2,
         "auditability": false,
-        "model": "gemini-2.5-flash",
-        "rawOutput": "Based on the patient's profile, here are two active clinical trials with sites in Washington state that could be suitable:\n\n1.  **NCT ID:** NCT04747970\n    *   **Title:** A Study of Erdafitinib Plus Cetrelimab in Participants With Advanced Urothelial Cancer and Selected FGFR Alterations Who Have Received Previous Anti-PD-(L)1 Therapy\n    *   **Rationale:** This trial directly addresses the patient's situation, investigating a combination of an FGFR inhibitor (Erdafitinib) and an immunotherapy (Cetrelimab) in patients with advanced urothelial cancer who have FGFR alterations and have previously received anti-PD-(L)1 therapy (like pembrolizumab) and progressed.\n    *   **Location:** Seattle, WA\n\n2.  **NCT ID:** NCT04845575\n    *   **Title:** A Study of Futibatinib (TAK-063) in Participants With Advanced Solid Tumors Harboring Fibroblast Growth Factor Receptor (FGFR) Gene Aberrations\n    *   **Rationale:** This is a basket trial specifically for advanced solid tumors, including urothelial carcinoma, that harbor FGFR gene aberrations. Futibatinib is an investigational FGFR inhibitor, fitting the targeted therapy request. Patients who have received prior immunotherapy would typically be eligible for this study.\n    *   **Location:** Seattle, WA",
+        "model": "gemini-3.8-flash",
+        "rawOutput": "Based on the patient's diagnosis of locally advanced/metastatic urothelial carcinoma harboring an activating *FGFR3* mutation with progression on prior anti-PD-1 immunotherapy (pembrolizumab), here are two active clinical trials offering targeted therapy with study sites in Washington state:\n\n---\n\n### **1. SURF301: Study of TYRA-300 in Advanced Solid Tumors With FGFR3 Gene Alterations**\n* **NCT ID:** NCT05574348\n* **Title:** A Phase 1/2 Study of TYRA-300 in Participants With Advanced Solid Tumors With FGFR3 Gene Alterations (SURF301)\n* **Study Description & Relevance:** \n  TYRA-300 is an investigational, oral, selective FGFR3 inhibitor designed to avoid the class-wide toxicities associated with FGFR1/2/4 inhibition (such as hyperphosphatemia). This trial specifically enrolls patients with advanced or metastatic urothelial carcinoma harboring *FGFR3* gene alterations who have progressed on or after standard-of-care systemic therapy (including prior immune checkpoint inhibitors such as pembrolizumab).\n* **Location in Washington:**\n  * **Fred Hutchinson Cancer Center / University of Washington Medical Center** – Seattle, Washington\n\n---\n\n### **2. Study of LOXO-435 (LY3866288) in Participants With Advanced Solid Tumors With FGFR3 Alterations**\n* **NCT ID:** NCT05619146\n* **Title:** A Phase 1/2 Study of LOXO-435 (LY3866288) in Participants With Advanced Solid Tumors With FGFR3 Alterations\n* **Study Description & Relevance:** \n  LOXO-435 is a highly selective, potent FGFR3 inhibitor. The study evaluates safety, tolerability, and preliminary efficacy in patients with locally advanced or metastatic solid tumors—including urothelial carcinoma—that harbor activating *FGFR3* mutations or fusions and have received prior standard therapy (chemotherapy and/or anti-PD-1/PD-L1 checkpoint inhibitors).\n* **Location in Washington:**\n  * **Fred Hutchinson Cancer Center** – Seattle, Washington",
         "extractedNcts": [
-          "NCT04747970",
-          "NCT04845575"
+          "NCT05574348",
+          "NCT05619146"
         ],
         "hallucinationDetails": [
-          "HALLUCINATED: NCT04747970 does not exist in verified oncology corpus.",
-          "HALLUCINATED: NCT04845575 does not exist in verified oncology corpus."
+          "HALLUCINATED: NCT05574348 does not exist in verified oncology corpus.",
+          "HALLUCINATED: NCT05619146 does not exist in verified oncology corpus."
         ],
         "summary": "Bare LLM produced 2 trial recommendations with 2 hallucinated/unverified NCT IDs. Zero database provenance or safety verification.",
-        "executionTimeMs": 17470
+        "executionTimeMs": 7838
       },
       "winner": "arm1",
       "clinicalVerdict": "Structured Sanity Agent safely reported 0 valid trials rather than poisoning patient with disqualified protocols. Naive keyword returned unsafe false positives."

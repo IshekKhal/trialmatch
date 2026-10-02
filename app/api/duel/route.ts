@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Concurrently execute Structured Sanity Agent and Naive Keyword Search
     const [structuredRes, naiveRes] = await Promise.all([
-      runStructuredAgent(profile),
+      runStructuredAgent(profile, criteria),
       Promise.resolve(runNaiveKeywordSearch(profile, criteria)),
     ]);
 
