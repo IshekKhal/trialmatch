@@ -7,12 +7,16 @@ import { PatientProfile } from '@/lib/types';
 interface PatientInputBarProps {
   initialProfile?: PatientProfile;
   onSubmit: (profile: PatientProfile) => void;
+  onClear?: () => void;
+  onTextChange?: (text: string) => void;
   isLoading: boolean;
 }
 
 export function PatientInputBar({
   initialProfile,
   onSubmit,
+  onClear,
+  onTextChange,
   isLoading,
 }: PatientInputBarProps) {
   const [freeText, setFreeText] = useState(initialProfile?.freeText || '');
@@ -64,6 +68,7 @@ export function PatientInputBar({
     setBiomarker('');
     setPriorTherapy('');
     setState('');
+    onClear?.();
   };
 
   return (
@@ -89,7 +94,9 @@ export function PatientInputBar({
         placeholder="Enter unstructured patient oncological record (e.g., '58yo with Non-Small Cell Lung Cancer, EGFR Exon 20 insertion, prior platinum chemotherapy completed 4 months ago, looking for recruiting trials in Texas')..."
         value={freeText}
         onChange={(e) => {
-          setFreeText(e.target.value);
+          const val = e.target.value;
+          setFreeText(val);
+          onTextChange?.(val);
           // If the user is modifying text without the filter panel open, clear old preset overrides
           if (!showFilters) {
             setCondition('');

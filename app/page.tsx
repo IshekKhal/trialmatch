@@ -72,8 +72,13 @@ export default function Home() {
     runDuel(currentProfile);
   }, []);
 
-  // Handle Preset Chip click: fills profile and immediately runs Duel with zero typing
+  // Handle Preset Chip click: fills profile and immediately runs Duel with zero typing (clicking active chip toggles off)
   const handleSelectScenario = (scenario: ClinicalScenario) => {
+    if (activeScenarioId === scenario.id) {
+      setActiveScenarioId('');
+      setCurrentProfile({ freeText: '' });
+      return;
+    }
     setActiveScenarioId(scenario.id);
     const newProfile: PatientProfile = {
       freeText: scenario.prompt,
@@ -172,6 +177,15 @@ export default function Home() {
       <PatientInputBar
         initialProfile={currentProfile}
         onSubmit={handleInputSubmit}
+        onClear={() => {
+          setActiveScenarioId('');
+          setCurrentProfile({ freeText: '' });
+        }}
+        onTextChange={(newText) => {
+          if (activeScenarioId && newText.trim() !== currentProfile.freeText?.trim()) {
+            setActiveScenarioId('');
+          }
+        }}
         isLoading={isLoading}
       />
 
