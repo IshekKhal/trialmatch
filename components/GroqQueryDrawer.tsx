@@ -36,7 +36,7 @@ export function GroqQueryDrawer({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Terminal size={14} color="var(--emerald-main)" />
-          <span>View GROQ Query &amp; Agent Logic Trace</span>
+          <span>View GROQ Query &amp; Safety Audit Trace</span>
           <span
             style={{
               fontSize: '11px',

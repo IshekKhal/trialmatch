@@ -15,25 +15,15 @@ export async function extractPatientCriteria(profile: PatientProfile): Promise<{
   state: string;
   phase?: string;
   reasoning: string;
+  extractor: string;
 }> {
   const text = profile.freeText || '';
-
-  // 1. If explicit manual filter fields are passed, prioritize them
-  if (profile.condition || profile.biomarker || profile.state) {
-    return {
-      condition: profile.condition || extractCondition(text) || 'Cancer',
-      biomarker: profile.biomarker || extractBiomarker(text) || 'EGFR',
-      priorTherapy: profile.priorTherapy || 'Chemotherapy Allowed',
-      state: profile.state || extractState(text) || '',
-      phase: profile.phase || extractPhase(text),
-      reasoning: 'Extracted from user clinical filter inputs and narrative profile.',
-    };
-  }
-
-  // 2. Try Claude Haiku 4.5 via Vercel AI SDK
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (apiKey && apiKey.trim() !== '' && !apiKey.includes('your_')) {
+
+  // 1. Try Claude Haiku 4.5 via live Anthropic API whenever clinical text is provided
+  if (text.trim() && apiKey && apiKey.trim() !== '' && !apiKey.includes('your_')) {
     try {
+      console.log('[TrialMatch] Invoking Claude Haiku 4.5 live API for clinical narrative parsing...');
       const response = await generateText({
         model: anthropic('claude-haiku-4-5-20251001'),
         system: `You are an expert precision oncology clinical trial parsing agent.
@@ -54,16 +44,30 @@ Output strictly valid JSON with no markdown wrapping.`,
       const cleaned = response.text.trim().replace(/^```json/i, '').replace(/```$/i, '').trim();
       const parsed = JSON.parse(cleaned);
       return {
-        condition: parsed.condition || extractCondition(text),
-        biomarker: parsed.biomarker || extractBiomarker(text),
-        priorTherapy: parsed.priorTherapy || 'Chemotherapy Allowed',
-        state: parsed.state || extractState(text),
-        phase: parsed.phase || extractPhase(text),
-        reasoning: parsed.reasoning || 'Extracted via Claude Haiku 4.5 structured analysis.',
+        condition: parsed.condition || profile.condition || extractCondition(text),
+        biomarker: parsed.biomarker || profile.biomarker || extractBiomarker(text),
+        priorTherapy: parsed.priorTherapy || profile.priorTherapy || 'Chemotherapy Allowed',
+        state: parsed.state || profile.state || extractState(text),
+        phase: profile.phase || (extractPhase(text) ? parsed.phase : undefined),
+        reasoning: parsed.reasoning || 'Extracted via structured clinical criteria analysis.',
+        extractor: 'Structured Agent Engine',
       };
-    } catch (err) {
-      console.warn('Anthropic API call failed or unavailable, using clinical rule parser:', err);
+    } catch (err: any) {
+      console.warn('[TrialMatch] Anthropic live API call failed, using deterministic fallback:', err?.message || err);
     }
+  }
+
+  // 2. Fallback: If explicit manual filter fields are passed (or when Claude is unavailable)
+  if (profile.condition || profile.biomarker || profile.state) {
+    return {
+      condition: profile.condition || extractCondition(text) || 'Cancer',
+      biomarker: profile.biomarker || extractBiomarker(text) || 'EGFR',
+      priorTherapy: profile.priorTherapy || 'Chemotherapy Allowed',
+      state: profile.state || extractState(text) || '',
+      phase: profile.phase || extractPhase(text),
+      reasoning: 'Extracted from manual clinical filters & deterministic entity matcher.',
+      extractor: 'Clinical Filter Engine',
+    };
   }
 
   // 3. Clinical Rule Parser fallback
@@ -75,6 +79,7 @@ Output strictly valid JSON with no markdown wrapping.`,
     phase: extractPhase(text),
     reasoning:
       'Deterministic oncology parser extracted primary diagnosis, driver oncogene, treatment history, and geographic requirements.',
+    extractor: 'Rule Parser Engine',
   };
 }
 
@@ -201,6 +206,8 @@ export async function runStructuredAgent(profile: PatientProfile): Promise<{
   summary: string;
   executionTimeMs: number;
   dataSource: 'sanity-live' | 'local-normalized';
+  extractor?: string;
+  reasoning?: string;
 }> {
   const startTime = Date.now();
 
@@ -265,8 +272,10 @@ export async function runStructuredAgent(profile: PatientProfile): Promise<{
     matches,
     groqQuery: query,
     groqParams,
-    summary,
+    summary: criteria.reasoning ? `${criteria.reasoning} ${summary}` : summary,
     executionTimeMs,
     dataSource: result.dataSource,
+    extractor: criteria.extractor,
+    reasoning: criteria.reasoning,
   };
 }
