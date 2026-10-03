@@ -11,6 +11,10 @@
 
 Built for the **[DEV Community x Sanity Challenge 2026](https://dev.to/challenges/sanity-2026-09-16)** (Path One: *Ship an Agent That Queries Real Content*).
 
+<p align="center">
+  <img src="https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/coie461029uqgag9lbaw.png" alt="TrialMatch Duel Arena" width="100%" />
+</p>
+
 ---
 
 ## Table of Contents
@@ -81,7 +85,7 @@ sequenceDiagram
 
     Clinician->>UI: Enter Patient Note ("58yo NSCLC, EGFR Exon 20, prior chemo, TX")
     UI->>Agent: Extract Clinical Primitives
-    Note over Agent: Converts narrative into:<br/>condition="Lung", biomarker="EGFR",<br/>chemo="ALLOWED", state="TX"
+    Note over Agent: Converts narrative into:<br/>condition="Lung", biomarker="EGFR",<br/>chemo="ALLOWED", location="TX"
     Agent->>MCP: Dispatch GROQ Query with Bound Parameters
     MCP->>KB: Check Washout & Hierarchy Rules
     KB-->>MCP: Rule Verified (Chemo permitted post-progression)
@@ -226,39 +230,46 @@ When the patient narrative arrives, the agent translates the clinical parameters
   recruitmentStatus == "RECRUITING" && 
   primaryCondition match $condition && 
   targetBiomarkers[] match $biomarker && 
+  (locations[].state match $location || 
+   locations[].city match $location || 
+   locations[].country match $location || 
+   locations[].facility match $location) && 
   (priorTherapyRules.chemotherapy == "ALLOWED" || 
    priorTherapyRules.chemotherapy == "REQUIRED" || 
-   priorTherapyRules.chemotherapy == "ANY") && 
-  locations[].state match $state] {
+   priorTherapyRules.chemotherapy == "ANY")] {
     nctId,
     briefTitle,
     phase,
     primaryCondition,
     targetBiomarkers,
     priorTherapyRules,
-    "matchingLocations": locations[state match $state]
+    "matchingLocations": locations[state match $location || city match $location || country match $location || facility match $location]
 }
 ```
 
-Because `priorTherapyRules.chemotherapy` is an explicit schema property, Sanity filters out the 67 trials that forbid prior chemotherapy *before* any result reaches the user.
+Because `priorTherapyRules.chemotherapy` is an explicit schema property, Sanity filters out trials that forbid prior chemotherapy *before* any result reaches the user.
 
 ---
 
 ## Empirical Benchmark: 3-Arm Evaluation Suite
 
+<p align="center">
+  <img src="https://dev-to-uploads.s3.us-east-2.amazonaws.com/uploads/articles/za1a73ed7rktb0t4v984.png" alt="TrialMatch 3-Arm Benchmark Scorecard" width="100%" />
+</p>
+
 We evaluated 10 gold-standard patient profiles across three discovery engines:
 
 | Evaluation Metric | Arm 1: Structured Sanity Agent | Arm 2: Naive Keyword Search | Arm 3: Bare LLM (Gemini 3.8 Flash) | Clinical Implication |
 | :--- | :---: | :---: | :---: | :--- |
-| **Medical Precision** | **100%** | 78% | 0% | Arm 1 guarantees verified candidacy; Arms 2 and 3 return disqualified cohorts |
-| **Safety Violations** | **0** | **60** | 20 | Naive search fails on negative exclusions; Bare LLM bypasses protocol rules |
-| **Hallucinated NCT IDs** | **0** | 0 | **20 (100% fake)** | Bare LLM invents non-existent identifiers |
+| **Medical Precision** | **100%** | **60%** | 0% | Arm 1 guarantees verified candidacy; Arms 2 and 3 return disqualified cohorts |
+| **Safety Violations** | **0** | **153** | 21 | Naive search fails on negative exclusions; Bare LLM bypasses protocol rules |
+| **Hallucinated NCT IDs** | **0** | 0 | **21 (100% fake)** | Bare LLM invents non-existent identifiers |
 | **Auditability Rate** | **100%** | 0% | 0% | Arm 1 provides exact GROQ queries and protocol rule citations |
-| **Avg Returned Trials** | 1.2 | 41.5 | 2.0 | Arm 1 strictly limits results to actionable, recruiting matches |
+| **Avg Returned Trials** | 1.2 | 41.5 | 2.1 | Arm 1 strictly limits results to actionable, recruiting matches |
 
 Run the benchmark locally:
 ```bash
-pnpm eval
+npm run eval
 ```
 
 ---
@@ -306,7 +317,8 @@ trialmatch/
 │       └── trials/route.ts    # Normalized clinical trial fetcher
 ├── components/
 │   ├── DuelArena.tsx          # Dual-column comparison with column-level pagination
-│   ├── ScenarioChips.tsx      # 8 pre-configured oncology clinical scenarios
+│   ├── PatientInputBar.tsx    # Natural language narrative input with reset & filter toggles
+│   ├── ScenarioChips.tsx      # 8 pre-configured oncology clinical scenarios (toggleable)
 │   ├── BenchmarkRunner.tsx    # Interactive benchmark runner & case inspector
 │   ├── BenchmarkTable.tsx     # 10-patient audit breakdown table
 │   └── Scoreboard.tsx         # Real-time comparative metric display
@@ -319,6 +331,9 @@ trialmatch/
 ├── lib/
 │   ├── agent.ts               # Agent query generator (narrative to GROQ)
 │   ├── sanity.ts              # Sanity client & live Context MCP bindings
+│   ├── protocol_auditor.ts    # Clinical safety auditor for protocol disqualifications
+│   ├── naive_search.ts        # Naive keyword search baseline engine
+│   ├── scenarios.ts           # 8 gold-standard preset clinical scenarios
 │   ├── eval_cases.ts          # 10 gold-standard oncology test profiles
 │   ├── eval_runner.ts         # Automated 3-arm benchmark execution engine
 │   └── types.ts               # TypeScript domain interfaces
@@ -328,7 +343,7 @@ trialmatch/
 └── data/
     ├── trials_normalized.json # 100 curated oncology trials (1.2 MB)
     ├── eval_results.json      # Raw 3-arm benchmark evaluation outputs
-    └── eval_summary.md        # Comprehensive 419-line benchmark report
+    └── eval_summary.md        # Comprehensive benchmark audit report
 ```
 
 ---
@@ -337,7 +352,7 @@ trialmatch/
 
 ### Prerequisites
 * Node.js 20+
-* pnpm 9+
+* npm or pnpm
 
 ### Setup
 ```bash
@@ -346,7 +361,7 @@ git clone https://github.com/IshekKhal/trialmatch.git
 cd trialmatch
 
 # Install dependencies
-pnpm install
+npm install  # or pnpm install
 
 # Configure environment variables
 cp .env.example .env
@@ -355,10 +370,13 @@ cp .env.example .env
 ### Run Locally
 ```bash
 # Start Next.js development server
-pnpm dev
+npm run dev  # or pnpm dev
+
+# Run the 3-arm empirical benchmark
+npm run eval # or pnpm eval
 
 # In a separate terminal, launch Sanity Studio locally (optional)
-cd studio && pnpm dev
+cd studio && npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
